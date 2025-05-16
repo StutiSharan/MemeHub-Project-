@@ -6,33 +6,21 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "Feed", path: "/feed" },
+  { name: "Analytics", path: "/analytics" }, // ✅ Analytics now available to all users
   { name: "Signup", path: "/signup" },
 ];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [userRole, setUserRole] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth();
-  const db = getFirestore();
 
-  // ✅ Fetch user role from Firestore
+  // ✅ Listen for authentication state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      if (authUser) {
-        setUser(authUser);
-        const userRef = doc(db, "users", authUser.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          setUserRole(userSnap.data().role); // ✅ Store user role
-        }
-      } else {
-        setUser(null);
-        setUserRole(null);
-      }
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      setUser(authUser);
     });
 
     return () => unsubscribe();
@@ -79,8 +67,6 @@ const Navbar = () => {
               </NavLink>
             </li>
           ))}
-          {/* ✅ Admin-only access */}
-          {userRole === "admin" && <NavLink to="/analytics">Analytics</NavLink>}
           {user && <NavLink to="/dashboard">Dashboard</NavLink>}
         </ul>
 
@@ -95,7 +81,7 @@ const Navbar = () => {
                 className="w-10 h-10 rounded-full border border-white"
               />
               <span className="font-semibold">
-                {userRole === "admin" ? "Admin" : user.displayName || "User"}
+                {user.displayName || "User"}
               </span>
             </div>
 
@@ -108,12 +94,13 @@ const Navbar = () => {
             </button>
           </div>
         ) : (
- <Link
-      to="/login"
-      className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md transition duration-300"
-    >
-      Login
-    </Link>        )}
+          <Link
+            to="/login"
+            className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md transition duration-300"
+          >
+            Login
+          </Link>
+        )}
 
         {/* Logout Modal */}
         {showLogoutModal && (
