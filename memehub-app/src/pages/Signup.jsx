@@ -1,29 +1,51 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../utils/firebaseConfig";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { NavLink, useNavigate } from "react-router-dom";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { auth } from "../utils/firebaseConfig";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user"); // Default role is "user"
   const [error, setError] = useState("");
-  const [showPopup, setShowPopup] = useState(false); // Popup state
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const db = getFirestore();
+  const auth = getAuth();
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+    if (role === "admin") {
+      navigate("/admin-dashboard");
+    }
     try {
-      const userCredentials = await createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const user = userCredentials.user;
+      const user = userCredential.user;
       await updateProfile(user, { displayName: name });
 
+      // ✅ Store role dynamically in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        name: name,
+        email: email,
+        role: role,
+      });
+
       setShowPopup(true);
-      console.log("Signup successful, setting popup:", showPopup);
 
       setTimeout(() => {
         setShowPopup(false);
@@ -45,36 +67,45 @@ const Signup = () => {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring focus:ring-indigo-400 placeholder-gray-700 placeholder-opacity-100 text-gray-900"
+            className="w-full p-3 rounded-lg bg-gray-100 border text-gray-900"
             onChange={(e) => setName(e.target.value)}
             required
           />
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring focus:ring-indigo-400 placeholder-gray-700 placeholder-opacity-100 text-gray-900"
+            className="w-full p-3 rounded-lg bg-gray-100 border text-gray-900"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="password"
             placeholder="Password (min 6 characters)"
-            className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring focus:ring-indigo-400 placeholder-gray-700 placeholder-opacity-100 text-gray-900"
+            className="w-full p-3 rounded-lg bg-gray-100 border text-gray-900"
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <select
+            className="w-full p-3 rounded-lg bg-gray-100 border text-gray-900"
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
           <button
             type="submit"
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-600 text-white rounded-lg font-semibold text-lg shadow-md transition duration-300"
+            className="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold text-lg"
           >
             Sign Up
           </button>
-          {/* Success Popup */}
+
           {showPopup && (
             <div className="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md z-50">
               ✅ Signup Successful! Redirecting...
             </div>
           )}
+
           <p className="text-center mt-4">
             Already have an account?{" "}
             <NavLink to="/login" className="text-pink-300 hover:underline">
@@ -82,6 +113,7 @@ const Signup = () => {
             </NavLink>
           </p>
         </form>
+
         {error && (
           <p className="text-red-500 text-center mt-4 font-medium">{error}</p>
         )}
