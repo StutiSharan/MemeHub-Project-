@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "Feed", path: "/feed" },
   { name: "Analytics", path: "/analytics" },
-  // { name: "Dashboard", path: "/dashboard" },
   { name: "Signup", path: "/signup" },
 ];
 
@@ -13,22 +13,29 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
   const auth = getAuth();
-  //to change state
+
+  // Listen to auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authUser) => {
       setUser(authUser);
     });
     return () => unsubscribe();
   }, []);
+  // generate userprofile Avtar
+  const generateRandomAvatar = () => {
+    const randomSeed = Math.random().toString(36).substr(2, 8); // Generate random string
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}`;
+  };
 
-  // logout fun
+  // Logout function
   const handleLogout = async () => {
     await signOut(auth);
     setShowLogoutModal(false);
-    naviagte("/");
+    navigate("/");
   };
+
   return (
     <nav className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center px-6 py-4">
@@ -57,18 +64,37 @@ const Navbar = () => {
               </NavLink>
             </li>
           ))}
+          {user && <NavLink to="/dashboard">Dashboard</NavLink>}
         </ul>
 
-        {/* { logout button only visible when user is loggedin}  */}
-        {user && (
-          <button
-            onClick={() => setShowLogoutModal(true)}
-            className="ml-4 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-semibold text-lg shadow-md transition duration-300"
-          >
-            Logout
-          </button>
+        {/* User Info & Logout Button */}
+        {user ? (
+          <div className="flex items-center space-x-4">
+            {/* User Avatar & Name */}
+            <div className="flex items-center space-x-2">
+              <img
+                src={user.photoURL || generateRandomAvatar()} // Fallback avatar
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full border border-white"
+              />
+              <span className="font-semibold">
+                {user.displayName || "User"}
+              </span>
+            </div>
+
+            {/* Logout Button */}
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-semibold text-lg shadow-md transition duration-300"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link to="/login">Login</Link>
         )}
-        {/* Logout Confirmation Modal */}
+
+        {/* Logout Modal */}
         {showLogoutModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-gray-900">
@@ -135,6 +161,7 @@ const Navbar = () => {
               </NavLink>
             </li>
           ))}
+          {user && <NavLink to="/dashboard">Dashboard</NavLink>}
         </ul>
       )}
     </nav>

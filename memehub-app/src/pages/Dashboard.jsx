@@ -38,6 +38,10 @@ const Dashboard = () => {
   const handleNavigateToUpload = () => {
     navigate("/upload");
   };
+
+  const handleTogenerateMemes = () => {
+    navigate("/generate");
+  };
   const handleDelete = async (memeId) => {
     if (!auth.currentUser) return;
 
@@ -77,13 +81,19 @@ const Dashboard = () => {
       <p className="text-center text-gray-700">
         You have uploaded {memes.length} memes.
       </p>
+      {/* the button that will rediects to the uplaod page */}
       <button
         onClick={handleNavigateToUpload}
         className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500"
       >
         🚀 Upload Meme
       </button>
-
+      <button
+        onClick={handleTogenerateMemes}
+        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500"
+      >
+        Generate Meme
+      </button>
       {/* Meme Gallery */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {memes.map((meme) => (

@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UploadMeme from "./components/UploadMems";
+import MemeGenerator from "./pages/MemeGenerator";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/upload" element={<UploadMeme />} />
+            <Route path="/generate" element={<MemeGenerator />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route
