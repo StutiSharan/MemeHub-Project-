@@ -91,14 +91,18 @@ const Navbar = () => {
             {/* Logout Button */}
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-semibold text-lg shadow-md transition duration-300"
+              className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-semibold text-lg shadow-md transition duration-300"
             >
               Logout
             </button>
           </div>
         ) : (
-          <Link to="/login">Login</Link>
-        )}
+ <Link
+      to="/login"
+      className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md transition duration-300"
+    >
+      Login
+    </Link>        )}
 
         {/* Logout Modal */}
         {showLogoutModal && (

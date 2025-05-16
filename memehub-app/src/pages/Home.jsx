@@ -3,6 +3,7 @@ import MemeCard from '../components/MemeCard';
 import memes from '../utils/sampleMemes';
 import MemeCarousel from '../components/MemeCarousel';
 import { Link } from 'react-router-dom';
+import { FaFireAlt, FaCrown, FaRocket } from 'react-icons/fa';
 import { ArrowRight } from 'lucide-react';
 
 const Home = () => {
@@ -82,20 +83,49 @@ const Home = () => {
       </section>
 
       {/* Badge System */}
-      <section className="bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
-        <h2 className="text-2xl font-bold mb-4 text-indigo-700">Badge System</h2>
-        <ul className="list-disc list-inside text-gray-700 space-y-2 text-base">
-          <li>
-            <span className="font-semibold text-indigo-800">First Viral Post:</span> Your first meme to hit 1k+ views.
-          </li>
-          <li>
-            <span className="font-semibold text-indigo-800">Weekly Winner:</span> Top meme in a 7-day span.
-          </li>
-          <li>
-            <span className="font-semibold text-indigo-800">10k Views Club:</span> Exclusive club for viral creators.
-          </li>
-        </ul>
-      </section>
+     <section className="bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
+  <h2 className="text-2xl font-bold mb-6 text-indigo-700">Badge System</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {/* First Viral Post Badge */}
+    <div className="group bg-white rounded-xl p-5 shadow hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer border-l-4 border-red-500">
+      <div className="flex items-center gap-4">
+        <div className="text-red-500 text-3xl">
+          <FaFireAlt />
+        </div>
+        <div>
+          <h4 className="text-lg font-bold text-indigo-900 group-hover:text-red-600 transition">First Viral Post</h4>
+          <p className="text-sm text-gray-600 group-hover:text-gray-800 transition">Your first meme to hit 1k+ views.</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Weekly Winner Badge */}
+    <div className="group bg-white rounded-xl p-5 shadow hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer border-l-4 border-yellow-400">
+      <div className="flex items-center gap-4">
+        <div className="text-yellow-400 text-3xl">
+          <FaCrown />
+        </div>
+        <div>
+          <h4 className="text-lg font-bold text-indigo-900 group-hover:text-yellow-500 transition">Weekly Winner</h4>
+          <p className="text-sm text-gray-600 group-hover:text-gray-800 transition">Top meme in a 7-day span.</p>
+        </div>
+      </div>
+    </div>
+
+    {/* 10K Views Club Badge */}
+    <div className="group bg-white rounded-xl p-5 shadow hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer border-l-4 border-purple-600">
+      <div className="flex items-center gap-4">
+        <div className="text-purple-600 text-3xl">
+          <FaRocket />
+        </div>
+        <div>
+          <h4 className="text-lg font-bold text-indigo-900 group-hover:text-purple-700 transition">10K Views Club</h4>
+          <p className="text-sm text-gray-600 group-hover:text-gray-800 transition">Exclusive club for viral creators.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
     </div>
   );
 };

@@ -24,10 +24,10 @@ const Footer = () => {
                   <a href="/feed" className="hover:text-indigo-400 transition-colors duration-200">Browse Feed</a>
                 </li>
                 <li>
-                  <a href="/leaderboard" className="hover:text-indigo-400 transition-colors duration-200">Leaderboard</a>
+                  <a href="/" className="hover:text-indigo-400 transition-colors duration-200">Home</a>
                 </li>
                 <li>
-                  <a href="/badges" className="hover:text-indigo-400 transition-colors duration-200">Badge System</a>
+                  <a href="/analytics" className="hover:text-indigo-400 transition-colors duration-200">Analytics</a>
                 </li>
               </ul>
             </div>
@@ -35,13 +35,10 @@ const Footer = () => {
               <h3 className="mb-2 font-semibold text-white">Company</h3>
               <ul className="space-y-1">
                 <li>
-                  <a href="/about" className="hover:text-indigo-400 transition-colors duration-200">About Us</a>
+                  <a href="/feed" className="hover:text-indigo-400 transition-colors duration-200">Feed</a>
                 </li>
                 <li>
-                  <a href="/contact" className="hover:text-indigo-400 transition-colors duration-200">Contact</a>
-                </li>
-                <li>
-                  <a href="/privacy" className="hover:text-indigo-400 transition-colors duration-200">Privacy Policy</a>
+                  <a href="/signup" className="hover:text-indigo-400 transition-colors duration-200">Sign Up</a>
                 </li>
               </ul>
             </div>
@@ -62,7 +59,7 @@ const Footer = () => {
                 type="email"
                 placeholder="Enter your email"
                 required
-                className="rounded-md px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-grow"
+                className="rounded-md px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-grow"
                 aria-label="Email address"
               />
               <button
