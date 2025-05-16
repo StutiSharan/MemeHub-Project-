@@ -12,7 +12,6 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user"); // Default role is "user"
   const [error, setError] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
@@ -26,9 +25,7 @@ const Signup = () => {
       setError("Password must be at least 6 characters long.");
       return;
     }
-    if (role === "admin") {
-      navigate("/admin-dashboard");
-    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -38,11 +35,10 @@ const Signup = () => {
       const user = userCredential.user;
       await updateProfile(user, { displayName: name });
 
-      // ✅ Store role dynamically in Firestore
+      // ✅ Store user in Firestore (No role)
       await setDoc(doc(db, "users", user.uid), {
         name: name,
         email: email,
-        role: role,
       });
 
       setShowPopup(true);
@@ -85,13 +81,6 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <select
-            className="w-full p-3 rounded-lg bg-gray-100 border text-gray-900"
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
 
           <button
             type="submit"
