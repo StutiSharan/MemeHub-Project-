@@ -11,7 +11,7 @@ const Home = () => {
   const topMemes = memes.slice(1, 6);
 
   return (
-   <div className="space-y-12 px-4 md:px-8 lg:px-16 py-10 bg-blue-50 min-h-screen">
+   <div className="space-y-12 px-4 md:px-8 lg:px-16 py-7 bg-blue-50 min-h-screen">
 
       {/* Welcome Section */}
       <div className="text-center space-y-5 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-2xl p-10 shadow-lg">

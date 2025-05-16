@@ -53,18 +53,26 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center px-6 py-4">
+     <div className="container mx-auto flex justify-between items-center px-8"> {/* Reduced py-4 → py-2 */}
+
         {/* Logo */}
-        <NavLink
-          to="/"
-          className="text-3xl font-extrabold tracking-wider drop-shadow-lg hover:text-pink-300 transition duration-300"
-          onClick={() => setMenuOpen(false)}
-        >
-          JokeJunction
-        </NavLink>
+       <NavLink
+  to="/"
+  className="flex flex-col items-center text-xl font-extrabold tracking-wider drop-shadow-lg hover:text-pink-300 transition duration-300"
+  onClick={() => setMenuOpen(false)}
+>
+ <img
+  src="/logo.png"
+  alt="JokeJunction Logo"
+  className="w-16 h-16 mb-0" // Increased size, removed bottom margin
+/>
+
+  <span className="-mt-4 mb-2">JokeJunction</span> {/* Optional: slight shift up if needed */}
+</NavLink>
+
 
         {/* Desktop Links */}
-        <ul className="hidden md:flex space-x-8 text-lg font-semibold">
+        <ul className="hidden md:flex space-x-8 text-xl font-semibold">
           {navLinks.map(({ name, path }) => (
             <li key={name}>
               <NavLink
