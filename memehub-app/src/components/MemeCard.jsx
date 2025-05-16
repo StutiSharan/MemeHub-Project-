@@ -1,6 +1,6 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { ThumbsUp, ThumbsDown, Eye, MessageSquare } from 'lucide-react'
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ThumbsUp, ThumbsDown, Eye, MessageSquare } from 'lucide-react';
 
 const MemeCard = ({ meme, highlight = false }) => {
   return (
@@ -11,11 +11,14 @@ const MemeCard = ({ meme, highlight = false }) => {
       whileHover={{ scale: 1.03 }}
       transition={{ type: 'spring', stiffness: 300 }}
     >
-      <img
-        src={meme.image}
-        alt={meme.caption}
-        className="w-full h-64 object-cover"
-      />
+      <div className="w-full h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+        <img
+          src={meme.image}
+          alt={meme.caption}
+          className="object-contain h-full"
+        />
+      </div>
+
       <div className="p-4 space-y-2">
         <h3 className="text-lg font-semibold text-gray-800">{meme.caption}</h3>
         <div className="flex items-center justify-between text-sm text-gray-500">
@@ -25,11 +28,12 @@ const MemeCard = ({ meme, highlight = false }) => {
             <ThumbsDown size={16} className="ml-2" /> {meme.downvotes}
           </div>
           <div className="flex items-center gap-1">
-            <MessageSquare size={16} /> {meme.comments.length}
+            <MessageSquare size={16} /> {meme.comments?.length || 0}
           </div>
         </div>
+
         <div className="flex gap-2 flex-wrap mt-2">
-          {meme.tags.map(tag => (
+          {(meme.tags || []).map(tag => (
             <span
               key={tag}
               className="bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-1 rounded-full"
@@ -40,7 +44,7 @@ const MemeCard = ({ meme, highlight = false }) => {
         </div>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default MemeCard
+export default MemeCard;
