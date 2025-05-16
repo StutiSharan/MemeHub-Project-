@@ -58,7 +58,7 @@ const Signup = () => {
           <p className="text-center mt-4">
             Already have an account?{" "}
             <NavLink to="/login" className="text-pink-300 hover:underline">
-              Log in here
+              ➡️ Log in here
             </NavLink>
           </p>
         </form>
