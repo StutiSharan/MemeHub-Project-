@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -21,7 +22,14 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/analytics" element={<Analytics />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
         <Footer />
