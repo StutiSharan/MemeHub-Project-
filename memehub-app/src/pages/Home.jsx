@@ -10,7 +10,8 @@ const Home = () => {
   const topMemes = memes.slice(1, 6);
 
   return (
-    <div className="space-y-12 px-4 md:px-8 lg:px-16 py-10 bg-gray-50">
+   <div className="space-y-12 px-4 md:px-8 lg:px-16 py-10 bg-blue-50 min-h-screen">
+
       {/* Welcome Section */}
       <div className="text-center space-y-5 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-2xl p-10 shadow-lg">
         <h1 className="text-5xl font-extrabold text-indigo-700 drop-shadow-md hover:scale-105 transition duration-300">
@@ -54,7 +55,9 @@ const Home = () => {
             {/* MemeCard wrapper */}
             <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-lg hover:scale-105 transform transition duration-500">
               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-300 via-purple-300 to-pink-300 opacity-20 blur-xl pointer-events-none rounded-2xl"></div>
-              <MemeCard meme={memeOfTheDay} highlight={true} />
+              <Link to="/signup" tabIndex={-1} className="block">
+                <MemeCard meme={memeOfTheDay} highlight={true} />
+              </Link>
             </div>
           </div>
         </div>
@@ -71,7 +74,9 @@ const Home = () => {
         <h2 className="text-2xl font-bold mb-4 text-indigo-700">Weekly Leaderboard</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {topMemes.map((meme) => (
-            <MemeCard key={meme.id} meme={meme} />
+            <Link key={meme.id} to="/signup" className="block">
+              <MemeCard meme={meme} />
+            </Link>
           ))}
         </div>
       </section>

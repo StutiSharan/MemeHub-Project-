@@ -11,14 +11,9 @@ const MemeCard = ({ meme, highlight = false }) => {
       whileHover={{ scale: 1.03 }}
       transition={{ type: 'spring', stiffness: 300 }}
     >
-     <div className="w-full h-48 bg-white px-4 py-2 flex items-center justify-center overflow-hidden">
-  <img
-    src={meme.image}
-    alt={meme.caption}
-    className="object-contain h-full"
-  />
-</div>
-
+      <div className="w-full h-48 bg-white px-4 py-2 flex items-center justify-center overflow-hidden">
+        <img src={meme.image} alt={meme.caption} className="object-contain h-full" />
+      </div>
 
       <div className="p-4 space-y-2">
         <h3 className="text-lg font-semibold text-gray-800">{meme.caption}</h3>
