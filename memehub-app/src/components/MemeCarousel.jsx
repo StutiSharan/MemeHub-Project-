@@ -2,36 +2,68 @@ import React, { useRef, useEffect } from 'react';
 import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import MemeCard from './MemeCard';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const MemeCarousel = ({ memes }) => {
-  const timerRef = useRef();
+  const sliderRef = useRef(null); // Ref for DOM element
+  const sliderInstanceRef = useRef(null); // Ref for slider instance
+  const timerRef = useRef(null);
 
-  const [sliderRef, slider] = useKeenSlider({
+  const [ref] = useKeenSlider({
     loop: true,
     slides: {
       perView: 1,
       spacing: 16,
     },
+    created: (slider) => {
+      sliderInstanceRef.current = slider;
+    },
   });
 
-  // Auto-play logic without pause on hover
+  // Auto-play every 3 seconds
   useEffect(() => {
-    if (!slider) return;
+    const startAutoPlay = () => {
+      timerRef.current = setInterval(() => {
+        sliderInstanceRef.current?.next();
+      }, 2000);
+    };
 
-    timerRef.current = setInterval(() => {
-      slider.next();
-    }, 3000); // Slide every 3 seconds
-
+    startAutoPlay();
     return () => clearInterval(timerRef.current);
-  }, [slider]);
+  }, []);
 
   return (
-    <div ref={sliderRef} className="keen-slider">
-      {memes.map((meme) => (
-        <div key={meme.id} className="keen-slider__slide">
-          <MemeCard meme={meme} highlight />
-        </div>
-      ))}
+    <div className="relative">
+      {/* Keen Slider */}
+      <div
+        ref={(node) => {
+          ref(node); // KeenSlider hook ref
+          sliderRef.current = node; // DOM ref
+        }}
+        className="keen-slider rounded-xl overflow-hidden"
+      >
+        {memes.map((meme) => (
+          <div key={meme.id} className="keen-slider__slide px-1">
+            <MemeCard meme={meme} highlight />
+          </div>
+        ))}
+      </div>
+
+      {/* Prev Button */}
+      <button
+        onClick={() => sliderInstanceRef.current?.prev()}
+        className="absolute top-1/2 left-0 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md z-10"
+      >
+        <ChevronLeft size={20} />
+      </button>
+
+      {/* Next Button */}
+      <button
+        onClick={() => sliderInstanceRef.current?.next()}
+        className="absolute top-1/2 right-0 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md z-10"
+      >
+        <ChevronRight size={20} />
+      </button>
     </div>
   );
 };

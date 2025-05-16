@@ -11,6 +11,7 @@ const memeImages = [
   "https://i.imgur.https://plaky.com/blog/wp-content/uploads/2023/08/Programmer-baby.jpg/UH3IPXz.jpeg",
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzEMeqqymEOwQMmTs0C4n0_S06M15Jq7U13Q&s",
   "https://i.pinimg.com/736x/4f/82/8d/4f828d05f82b8b7aedfe8be6a7d9d2a3.jpg", 
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFSWtTxOSnBcqvWHYK5UujV4gJQ2vR9WDVSw&s",
 ];
 
 const memes = Array.from({ length: 12 }).map((_, i) => ({
