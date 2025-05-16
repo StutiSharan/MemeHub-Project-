@@ -30,16 +30,22 @@ const Navbar = () => {
     naviagte("/");
   };
   return (
-    <nav className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center px-6 py-4">
-        {/* Logo */}
-        <NavLink
-          to="/"
-          className="text-3xl font-extrabold tracking-wider drop-shadow-lg hover:text-pink-300 transition duration-300"
-          onClick={() => setMenuOpen(false)}
-        >
-          MemeHub
-        </NavLink>
+   <nav className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white shadow-lg sticky top-0 z-50">
+  <div className="container mx-auto flex justify-between items-center px-6 py-2">
+    {/* Logo */}
+    <NavLink
+      to="/"
+      className="flex flex-col items-center text-xl font-extrabold tracking-wider drop-shadow-lg hover:text-pink-300 transition duration-300 leading-none"
+      onClick={() => setMenuOpen(false)}
+    >
+      <img
+        src="/logo.png"
+        alt="JokeJunction Logo"
+        className="w-10 h-10" // reduced from w-20 h-20
+      />
+      <span className="mt-0 text-sm sm:text-base">JokeJunction</span>
+    </NavLink>
+
 
         {/* Desktop Links */}
         <ul className="hidden md:flex space-x-8 text-lg font-semibold">

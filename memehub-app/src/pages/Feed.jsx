@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../utils/firebaseConfig";
 
 const TABS = [
   { key: "new", label: "New", api: "https://www.reddit.com/r/memes/new.json?limit=50" },
@@ -8,29 +10,25 @@ const TABS = [
 ];
 
 const ITEMS_PER_PAGE = 12;
+const DEFAULT_TAGS = ["funny", "meme", "lol", "humor", "dank", "viral", "fun", "comedy", "jokes", "hilarious"];
 
 function Feed() {
   const [memes, setMemes] = useState([]);
   const [filteredMemes, setFilteredMemes] = useState([]);
-  const [tab, setTab] = useState(TABS[1]); // default to Top (24h)
+  const [tab, setTab] = useState(TABS[1]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [activeTag, setActiveTag] = useState(null);
+  const [votes, setVotes] = useState(() => JSON.parse(localStorage.getItem("memeVotes")) || {});
+  const [comments, setComments] = useState(() => JSON.parse(localStorage.getItem("memeComments")) || {});
+  const [allTags, setAllTags] = useState([]);
+  const [user, setUser] = useState(null);
+  const [selectedMeme, setSelectedMeme] = useState(null);
 
-  const [votes, setVotes] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("memeVotes")) || {};
-    } catch {
-      return {};
-    }
-  });
-  const [comments, setComments] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("memeComments")) || {};
-    } catch {
-      return {};
-    }
-  });
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => setUser(user));
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     async function fetchMemes() {
@@ -40,14 +38,14 @@ function Feed() {
         if (json?.data?.children) {
           const posts = json.data.children
             .map(({ data }) => data)
-            .filter(
-              (post) =>
-                (post.post_hint === "image" || post.url.endsWith(".jpg") || post.url.endsWith(".png") || post.url.endsWith(".jpeg")) &&
-                !post.over_18
+            .filter((post) =>
+              (post.post_hint === "image" || post.url.endsWith(".jpg") || post.url.endsWith(".png")) && !post.over_18
             )
             .map((post) => {
-              const hashtags = (post.title.match(/#([a-zA-Z0-9-_]+)/g) || []).map(tag => tag.slice(1).toLowerCase());
-
+              let hashtags = (post.title.match(/#([a-zA-Z0-9-_]+)/g) || []).map(tag => tag.slice(1).toLowerCase());
+              if (hashtags.length === 0) {
+                hashtags = [...DEFAULT_TAGS].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + 1);
+              }
               return {
                 id: post.id,
                 title: post.title,
@@ -63,6 +61,9 @@ function Feed() {
           setPage(1);
           setActiveTag(null);
           setSearch("");
+
+          const uniqueTags = Array.from(new Set(posts.flatMap((p) => p.hashtags))).sort();
+          setAllTags(uniqueTags);
         }
       } catch (error) {
         console.error("Failed to fetch memes:", error);
@@ -71,16 +72,13 @@ function Feed() {
     fetchMemes();
   }, [tab]);
 
-  // Filter by search and active tag
   useEffect(() => {
     let filtered = memes;
 
     if (search.trim()) {
       const s = search.toLowerCase();
-      filtered = filtered.filter(
-        (m) =>
-          m.title.toLowerCase().includes(s) ||
-          m.hashtags.some((tag) => tag.includes(s))
+      filtered = filtered.filter((m) =>
+        m.title.toLowerCase().includes(s) || m.hashtags.some((tag) => tag.includes(s))
       );
     }
 
@@ -100,41 +98,64 @@ function Feed() {
     localStorage.setItem("memeComments", JSON.stringify(comments));
   }, [comments]);
 
-  const handleVote = useCallback(
-    (id, vote) => {
-      setVotes((prev) => {
-        if (prev[id] === vote) {
-          const copy = { ...prev };
-          delete copy[id];
-          return copy;
-        }
-        return { ...prev, [id]: vote };
-      });
-    },
-    [setVotes]
-  );
+  const handleVote = useCallback((id, vote) => {
+    setVotes((prev) => {
+      if (prev[id] === vote) {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
+      }
+      return { ...prev, [id]: vote };
+    });
+  }, []);
 
-  const handleAddComment = useCallback(
-    (id, text) => {
-      if (!text.trim()) return;
-      setComments((prev) => {
-        const currComments = prev[id] || [];
-        return {
-          ...prev,
-          [id]: [...currComments, text.trim().slice(0, 140)],
-        };
-      });
-    },
-    [setComments]
-  );
+  const getDisplayName = (user) => {
+    if (user.displayName) return user.displayName;
+    if (user.email) {
+      const namePart = user.email.split("@")[0];
+      const withoutNumbers = namePart.replace(/\d+/g, "");
+      const spaced = withoutNumbers.replace(/([a-z])([A-Z])/g, "$1 $2");
+      const final = spaced
+        .replace(/([a-z]{5,})([a-z]{4,})/, "$1 $2")
+        .replace(/([a-z])/, (m) => m.toUpperCase());
 
-  const loadMore = () => setPage((p) => p + 1);
+      return final
+        .split(" ")
+        .map((word) => word.charAt(0).toLowerCase() + word.slice(1))
+        .join("");
+    }
+    return "Anonymous";
+  };
 
-  // Click tag sets filter
+  const handleAddComment = useCallback((id, text) => {
+    if (!text.trim() || !user) return;
+    setComments((prev) => {
+      const currComments = prev[id] || [];
+      return {
+        ...prev,
+        [id]: [
+          ...currComments,
+          {
+            text: text.trim().slice(0, 140),
+            uid: user.uid,
+            displayName: getDisplayName(user),
+          },
+        ],
+      };
+    });
+  }, [user]);
+
+  const handleDeleteComment = useCallback((id, index) => {
+    setComments((prev) => {
+      const curr = [...(prev[id] || [])];
+      curr.splice(index, 1);
+      return { ...prev, [id]: curr };
+    });
+  }, []);
+
   const onTagClick = (tag) => {
-    if (tag === activeTag) {
-      setActiveTag(null);
-    } else {
+    if (tag === activeTag) setActiveTag(null);
+    else {
       setActiveTag(tag);
       setSearch("");
     }
@@ -148,35 +169,44 @@ function Feed() {
           <button
             key={t.key}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-full font-semibold transition ${
-              tab.key === t.key
-                ? "bg-indigo-600 text-white shadow-lg"
-                : "bg-gray-200 text-gray-700 hover:bg-indigo-100"
-            }`}
+            className={`px-4 py-2 rounded-full font-semibold transition ${tab.key === t.key
+              ? "bg-indigo-600 text-white shadow-lg"
+              : "bg-gray-200 text-gray-700 hover:bg-indigo-100"
+              }`}
           >
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* Search & Clear Tag Filter */}
+      {/* Search + Filter */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 max-w-md mx-auto">
         <input
           type="search"
-          placeholder="Search memes by title or hashtag..."
+          placeholder="Search memes..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             if (activeTag) setActiveTag(null);
           }}
-          className="flex-grow px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="flex-grow px-4 py-3 rounded-xl border border-gray-300"
         />
+        <select
+          value={activeTag || ""}
+          onChange={(e) => setActiveTag(e.target.value || null)}
+          className="px-4 py-3 rounded-xl border border-gray-300"
+        >
+          <option value="">All Tags</option>
+          {allTags.map((tag) => (
+            <option key={tag} value={tag}>#{tag}</option>
+          ))}
+        </select>
         {activeTag && (
           <button
             onClick={() => setActiveTag(null)}
-            className="text-indigo-600 hover:underline font-semibold"
+            className="px-3 py-1.5 bg-red-100 text-red-700 rounded-full hover:bg-red-200"
           >
-            Clear tag filter: #{activeTag}
+            Clear tag ✕
           </button>
         )}
       </div>
@@ -191,21 +221,43 @@ function Feed() {
             onVote={handleVote}
             comments={comments[meme.id] || []}
             onAddComment={handleAddComment}
+            onDeleteComment={handleDeleteComment}
             onTagClick={onTagClick}
             activeTag={activeTag}
+            user={user}
+            onImageClick={() => setSelectedMeme(meme)}
           />
         ))}
       </div>
 
-      {/* Load More */}
       {page * ITEMS_PER_PAGE < filteredMemes.length && (
         <div className="flex justify-center mt-8">
           <button
-            onClick={loadMore}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 shadow-lg transition"
+            onClick={() => setPage((p) => p + 1)}
+            className="px-6 py-3 bg-indigo-600 text-white rounded-full"
           >
             Load More
           </button>
+        </div>
+      )}
+
+      {/* Modal Popup */}
+      {selectedMeme && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl p-4 relative max-w-3xl w-full">
+            <button
+              onClick={() => setSelectedMeme(null)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-red-500 text-2xl"
+            >
+              ✕
+            </button>
+            <img
+              src={selectedMeme.url}
+              alt={selectedMeme.title}
+              className="w-full rounded-lg object-contain max-h-[80vh] mx-auto"
+            />
+            <h2 className="text-lg font-bold mt-3 text-center text-indigo-700">{selectedMeme.title}</h2>
+          </div>
         </div>
       )}
     </div>
@@ -214,37 +266,32 @@ function Feed() {
 
 export default Feed;
 
-// MemeCard component (images NOT clickable, tags clickable)
-const MemeCard = ({ meme, vote, onVote, comments, onAddComment, onTagClick, activeTag }) => {
-  const [commentText, setCommentText] = React.useState("");
-  const [showComments, setShowComments] = React.useState(false);
+// MemeCard Component
+const MemeCard = ({ meme, vote, onVote, comments, onAddComment, onDeleteComment, onTagClick, activeTag, user, onImageClick }) => {
+  const [commentText, setCommentText] = useState("");
+  const [showComments, setShowComments] = useState(false);
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition relative flex flex-col">
+    <div className="bg-white p-5 rounded-xl shadow-lg flex flex-col">
       <img
         src={meme.url}
         alt={meme.title}
-        className="w-full object-cover aspect-[4/3]"
-        loading="lazy"
+        onClick={onImageClick}
+        className="w-full object-cover aspect-[4/3] cursor-pointer hover:opacity-80 transition"
       />
       <div className="p-4 flex-grow flex flex-col">
         <h3 className="font-bold text-lg text-indigo-700 mb-1">{meme.title}</h3>
 
-        {/* Hashtags */}
+        {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
-          {meme.hashtags.length === 0 && (
-            <span className="text-xs text-gray-400 italic">No tags</span>
-          )}
           {meme.hashtags.map((tag) => (
             <button
               key={tag}
               onClick={() => onTagClick(tag)}
-              className={`text-xs rounded-full px-2 py-0.5 cursor-pointer select-none transition ${
-                activeTag === tag
-                  ? "bg-indigo-600 text-white"
-                  : "bg-indigo-100 text-indigo-800 hover:bg-indigo-300"
-              }`}
-              title={`Filter by #${tag}`}
+              className={`text-xs px-2 py-0.5 rounded-full transition ${activeTag === tag
+                ? "bg-indigo-600 text-white"
+                : "bg-indigo-100 text-indigo-800 hover:bg-indigo-300"
+                }`}
             >
               #{tag}
             </button>
@@ -252,83 +299,53 @@ const MemeCard = ({ meme, vote, onVote, comments, onAddComment, onTagClick, acti
         </div>
 
         {/* Votes */}
-        <div className="flex items-center gap-3 mb-3 select-none">
-          <button
-            onClick={() => onVote(meme.id, 1)}
-            className={`p-2 rounded-full transition ${
-              vote === 1
-                ? "bg-green-500 text-white shadow-md"
-                : "bg-gray-200 hover:bg-green-100"
-            }`}
-            aria-label="Upvote"
-            title="Upvote"
-          >
-            👍
-          </button>
-          <button
-            onClick={() => onVote(meme.id, -1)}
-            className={`p-2 rounded-full transition ${
-              vote === -1
-                ? "bg-red-500 text-white shadow-md"
-                : "bg-gray-200 hover:bg-red-100"
-            }`}
-            aria-label="Downvote"
-            title="Downvote"
-          >
-            👎
-          </button>
-          <span className="text-gray-700 font-semibold">
-            Votes: {vote === 1 ? "1" : vote === -1 ? "-1" : "0"}
-          </span>
+        <div className="flex items-center gap-3 mb-3">
+          <button onClick={() => onVote(meme.id, 1)} className={`p-2 rounded-full ${vote === 1 ? "bg-green-500 text-white" : "bg-gray-200"}`}>👍</button>
+          <button onClick={() => onVote(meme.id, -1)} className={`p-2 rounded-full ${vote === -1 ? "bg-red-500 text-white" : "bg-gray-200"}`}>👎</button>
+          <span>Votes: {vote}</span>
         </div>
 
-        {/* Comment Toggle */}
-        <button
-          onClick={() => setShowComments((v) => !v)}
-          className="mb-2 text-indigo-600 font-semibold hover:underline self-start"
-          aria-expanded={showComments}
-          aria-controls={`comments-${meme.id}`}
-        >
-          {showComments ? "Hide Comments" : `Show Comments (${comments.length})`}
+        {/* Comments */}
+        <button onClick={() => setShowComments(!showComments)} className="text-indigo-600 font-semibold">
+          {showComments ? "Hide" : "Show"} Comments ({comments.length})
         </button>
 
-        {/* Comments Section */}
         {showComments && (
-          <div
-            id={`comments-${meme.id}`}
-            className="flex flex-col gap-2 max-h-48 overflow-y-auto border border-indigo-200 p-2 rounded"
-          >
-            {comments.length === 0 && (
-              <p className="text-sm text-gray-400 italic select-none">No comments yet.</p>
-            )}
+          <div className="mt-2 space-y-2 max-h-48 overflow-y-auto border p-2 rounded">
             {comments.map((c, i) => (
-              <div
-                key={i}
-                className="bg-indigo-50 text-indigo-900 px-3 py-1 rounded text-sm break-words"
-              >
-                {c}
+              <div key={i} className="bg-indigo-50 p-2 rounded text-sm flex justify-between items-center">
+                <div>
+                  <strong>{c.displayName}:</strong> {c.text}
+                </div>
+                {user?.uid === c.uid && (
+                  <button
+                    onClick={() => onDeleteComment(meme.id, i)}
+                    className="text-red-600 text-xs ml-3 hover:underline"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             ))}
 
-            {/* Add Comment Form */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (commentText.trim().length === 0) return;
-                onAddComment(meme.id, commentText.trim().slice(0, 140));
-                setCommentText("");
-              }}
-              className="mt-2"
-            >
-              <input
-                type="text"
-                maxLength={140}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Add a comment (max 140 chars)"
-                className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              />
-            </form>
+            {user ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  onAddComment(meme.id, commentText);
+                  setCommentText("");
+                }}
+              >
+                <input
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Write a comment..."
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </form>
+            ) : (
+              <p className="text-gray-500 italic">Login to comment.</p>
+            )}
           </div>
         )}
       </div>
