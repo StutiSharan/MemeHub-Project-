@@ -11,16 +11,16 @@ const Home = () => {
   const topMemes = memes.slice(1, 6);
 
   return (
-   <div className="space-y-12 px-4 md:px-8 lg:px-16 py-7 bg-blue-50 min-h-screen">
+   <div className="space-y-12 px-4 md:px-8 lg:px-16 py-4 bg-blue-50 min-h-screen">
 
       {/* Welcome Section */}
       <div className="text-center space-y-5 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-2xl p-10 shadow-lg">
         <h1 className="text-5xl font-extrabold text-indigo-700 drop-shadow-md hover:scale-105 transition duration-300">
-          Welcome to MemeHub
+          Welcome to JokeJunction
         </h1>
 
         <p className="text-lg text-gray-700 max-w-3xl mx-auto hover:text-indigo-600 transition-colors duration-300">
-          MemeHub is your ultimate destination for sharing, discovering, and celebrating internet culture through memes.
+          JokeJunction is your ultimate destination for sharing, discovering, and celebrating internet culture through memes.
           Whether you're a seasoned meme-lord or a casual scroller, this is the platform where humor meets community.
         </p>
 
