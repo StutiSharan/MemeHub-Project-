@@ -3,13 +3,19 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
 
-const ProtectedRoute = ({ children }) => {
+const ADMIN_EMAIL = "anjali@gmail.com"; // Define admin email
+
+const ProtectedRoute = ({ children, adminOnly }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-      setUser(authUser);
+      if (authUser) {
+        setUser(authUser);
+        setIsAdmin(authUser.email === ADMIN_EMAIL); // Check admin role
+      }
       setLoading(false);
     });
 
@@ -17,6 +23,11 @@ const ProtectedRoute = ({ children }) => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
+
+  // Admin-only pages should be accessible only to the admin
+  if (adminOnly && !isAdmin) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return user ? children : <Navigate to="/login" />;
 };

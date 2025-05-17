@@ -11,22 +11,25 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UploadMeme from "./components/UploadMems";
 import MemeGenerator from "./pages/MemeGenerator";
+import AdminDashboard from "./AdminPage/AdminCredentials";
 
 const App = () => {
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Navbar />
+
         <main className="flex-grow container mx-auto px-4 py-6">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/upload" element={<UploadMeme />} />
-            <Route path="/generate" element={<MemeGenerator />} />
-            <Route path="/feed" element={<Feed />} />
-
+            {/* Regular user can Acess these pages */}
+            <Route
+              path="/feed"
+              element={
+                <ProtectedRoute>
+                  <Feed />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/dashboard"
               element={
@@ -35,6 +38,32 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+
+            {/* Admin Only- Can see verything */}
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admindashboard"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Default Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+
+            <Route path="/upload" element={<UploadMeme />} />
+            <Route path="/generate" element={<MemeGenerator />} />
           </Routes>
         </main>
         <Footer />

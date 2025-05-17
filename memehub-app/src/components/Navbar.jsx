@@ -14,6 +14,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [userAvatar, setUserAvatar] = useState(null);
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -21,6 +22,10 @@ const Navbar = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authUser) => {
       setUser(authUser);
+      // ✅ If user has a profile picture, use it. Otherwise, store a generated avatar once.
+      if (authUser) {
+        setUserAvatar(authUser.photoURL || generateRandomAvatar(authUser.uid));
+      }
     });
 
     return () => unsubscribe();
@@ -28,8 +33,7 @@ const Navbar = () => {
 
   // ✅ Generate random avatar if the user has no profile image
   const generateRandomAvatar = () => {
-    const randomSeed = Math.random().toString(36).substr(2, 8);
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}`;
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=6`;
   };
 
   // ✅ Logout function
@@ -87,7 +91,7 @@ const Navbar = () => {
                 className="w-10 h-10 rounded-full border border-white"
               />
               <span className="font-semibold">
-                {user.displayName || "User"}
+                {user.displayName || "Admin"}
               </span>
             </div>
 
@@ -116,28 +120,35 @@ const Navbar = () => {
         </button>
         {/* 🏆 Mobile Sidebar (Visible when `menuOpen === true`) */}
         {menuOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex">
-            <div className="w-3/4 bg-white p-6 flex flex-col space-y-6">
+          <div className="fixed inset-0  bg-opacity-50 z-50 flex">
+            <div className="w-3/4 bg-purple-400 p-6 flex flex-col space-y-6">
               <button
                 onClick={() => setMenuOpen(false)}
-                className="self-end text-2xl"
+                className="self-end text-black bg-gray-300 rounded-full px-2 text-2xl"
               >
                 ✕
               </button>
-              {navLinks.map(({ name, path }) => (
-                <NavLink
-                  key={name}
-                  to={path}
-                  className="text-lg font-semibold text-gray-900 hover:text-indigo-700"
-                >
-                  {name}
-                </NavLink>
-              ))}
-              {user && (
-                <NavLink to="/dashboard" className="text-lg font-semibold">
-                  Dashboard
-                </NavLink>
-              )}
+              <nav className="flex flex-col space-y-4">
+                {navLinks.map(({ name, path }) => (
+                  <NavLink
+                    key={name}
+                    to={path}
+                    className="text-lg font-semibold text-gray-900 hover:text-indigo-700"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {name}
+                  </NavLink>
+                ))}
+                {user && (
+                  <NavLink
+                    to="/dashboard"
+                    className="text-lg text-black font-semibold"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Dashboard
+                  </NavLink>
+                )}
+              </nav>
               {user ? (
                 <button
                   onClick={() => setShowLogoutModal(true)}
