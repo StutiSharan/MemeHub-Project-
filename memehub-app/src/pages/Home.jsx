@@ -19,8 +19,8 @@ const Home = () => {
     <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">
 
     {/* 🎉 Marquee Banner */}
-<div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full overflow-hidden shadow-lg mb-6">
-  <p className="animate-marquee text-sm sm:text-lg flex gap-4 whitespace-nowrap crinkle">
+<div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full text-center overflow-hidden shadow-lg mb-6">
+  <p className="animate-marquee text-sm sm:text-lg flex gap-4  text-center whitespace-nowrap crinkle">
     🥳 Welcome to Meme Madness Central! 🚀 Post memes, earn badges, conquer the leaderboard! 😂🔥💀👑
   </p>
 </div>
@@ -38,8 +38,7 @@ const Home = () => {
           Enter the Meme Realm
         </h2>
         <p className="text-sm sm:text-base lg:text-lg text-yellow-100 max-w-xl mx-auto">
-          Dive headfirst into the ultimate meme carnival. From dank to goofy, viral to niche — we've got it all.
-          Feel the chaos, ride the hype, and let your funny bone run wild.
+        Step into the wild world of memes — from savage to silly, trending to underground. Embrace the madness, chase the laughs, and unleash your inner meme lord.
         </p>
         <Link
   to="/feed"
