@@ -1,45 +1,46 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+// AnalyticsTracker.jsx
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { analytics } from "../utils/firebaseConfig";
+import {
+  logEvent as firebaseLogEvent,
+  setUserProperties,
+} from "firebase/analytics";
 
-const db = getFirestore();
-const auth = getAuth();
-
+// 🔁 Automatically track page views on route change
 const Analytics = () => {
-  const [userRole, setUserRole] = useState(null);
-  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const fetchRole = async () => {
-      const user = auth.currentUser;
-      if (!user) {
-        navigate("/");
-        return;
-      }
+    firebaseLogEvent(analytics, "page_view", {
+      page_path: location.pathname,
+    });
+  }, [location]);
 
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
+  return null;
+};
 
-      if (userSnap.exists()) {
-        const role = userSnap.data().role;
-        setUserRole(role);
+// 🔧 Exported helper function for custom events
+export const logEvent = (eventName, params = {}) => {
+  firebaseLogEvent(analytics, eventName, params);
+};
 
-        if (role !== "admin") {
-          navigate("/");
-        }
-      }
-    };
-
-    fetchRole();
-  }, []);
-
-  return userRole === "admin" ? (
-    <div>
-      <h1>📊 Admin Analytics Dashboard</h1>
-      {/* Show analytics data here */}
-    </div>
-  ) : null;
+// 👤 Optional: Exported function to set user properties
+export const setUser = (properties) => {
+  setUserProperties(analytics, properties);
 };
 
 export default Analytics;
+// DownloadButton.jsx
+
+const DownloadButton = () => {
+  const handleClick = () => {
+    logEvent("clicked_download_button", {
+      item: "PDF Guide",
+    });
+  };
+
+  return <button onClick={handleClick}>Download PDF</button>;
+};
+
+export { DownloadButton };
