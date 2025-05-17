@@ -3,7 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import { Send, X, Minimize2, Maximize2, Loader2, Sparkles } from "lucide-react";
 import ChatMessage from "../geminisuggest/ChatMessage";
 
-// ✅ Updated to new SDK usage
+// ✅ Initialize GenAI
 const genAI = new GoogleGenAI({
   apiKey: "AIzaSyCw6DlNHSHK0iQ6_H5tjZn-yLu1WQJyOgw",
 });
@@ -20,7 +20,6 @@ const ChatWindow = ({ isOpen, onClose }) => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // This useEffect show data when bot is opened for first time or again
   useEffect(() => {
     const fetchUserData = () => {
       const userDetails = JSON.parse(
@@ -43,7 +42,6 @@ const ChatWindow = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // It handles closing of chatbot
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -63,12 +61,10 @@ const ChatWindow = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-  // This helps to scroll at bottom of message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  //   Focus on input box after opening chatbot
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
@@ -90,7 +86,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
         contents: userMessage,
       });
 
-      const reply = result.text; // ✅ Correct text access
+      const reply = result.text;
       setMessages((prev) => [...prev, { text: reply, isBot: true }]);
     } catch (error) {
       console.error("Error:", error);
@@ -118,11 +114,10 @@ const ChatWindow = ({ isOpen, onClose }) => {
   return (
     <div
       ref={chatWindowRef}
-      className={`fixed bottom-10 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 
-      overflow-hidden transition-all duration-300 ease-in-out backdrop-blur-lg 
-      dark:bg-gray-900 dark:border-gray-700 
-      ${isMinimized ? "h-14" : "h-[500px]"}`}
-      style={{ boxShadow: "0 4px 32px rgba(0, 0, 0, 0.1)" }}
+      className={`fixed bottom-4 right-2 w-[90vw] max-w-sm bg-gray-900 text-white rounded-2xl shadow-2xl border border-gray-700 
+      overflow-hidden transition-all duration-300 ease-in-out 
+      ${isMinimized ? "h-14" : "h-[420px]"}`}
+      style={{ boxShadow: "0 4px 32px rgba(0, 0, 0, 0.6)" }}
     >
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white p-3 flex items-center justify-between">
@@ -138,7 +133,6 @@ const ChatWindow = ({ isOpen, onClose }) => {
             </p>
           </div>
         </div>
-
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsMinimized(!isMinimized)}
@@ -154,18 +148,17 @@ const ChatWindow = ({ isOpen, onClose }) => {
           </button>
         </div>
       </div>
-      {/* Header End*/}
 
       {!isMinimized && (
         <>
           {/* Messages */}
-          <div className="h-[calc(100%-8rem)] overflow-y-auto p-3 space-y-3 bg-gray-50/50 dark:bg-gray-900">
+          <div className="h-[calc(100%-8rem)] overflow-y-auto p-3 space-y-3 bg-gray-800">
             {messages.map((message, index) => (
               <div key={index} className="flex items-start gap-2 text-white">
                 {message.isBot ? (
                   <ChatMessage message={message.text} isBot={true} />
                 ) : (
-                  <div className="flex items-start gap-2 justify-end w-full text-white">
+                  <div className="flex items-start gap-2 justify-end w-full">
                     <div className="flex-1">
                       <ChatMessage message={message.text} isBot={false} />
                     </div>
@@ -182,14 +175,13 @@ const ChatWindow = ({ isOpen, onClose }) => {
                 <span className="text-xs">AI is thinking...</span>
               </div>
             )}
-            {/* Add this to scroll at bottom once message is added  */}
             <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
           <form
             onSubmit={handleSubmit}
-            className="p-3 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700"
+            className="p-3 bg-gray-900 border-t border-gray-700"
           >
             <div className="relative">
               <textarea
@@ -198,10 +190,10 @@ const ChatWindow = ({ isOpen, onClose }) => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message..."
-                className={`w-full pr-10 pl-3 py-2 rounded-xl border border-gray-200 
+                className={`w-full pr-10 pl-3 py-2 rounded-xl border border-gray-600 
                 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 
-                resize-none text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                placeholder-gray-400 dark:placeholder-gray-500`}
+                resize-none text-sm bg-gray-800 text-white 
+                placeholder-gray-400`}
                 rows={1}
                 style={{ maxHeight: "100px" }}
               />
