@@ -165,6 +165,17 @@ export default function MemeGenerator() {
       <h1 className="text-4xl font-extrabold mb-6 tracking-wide text-yellow-800 drop-shadow-lg">
         Meme Templates
       </h1>
+<div className="mb-6 max-w-3xl text-center text-yellow-900 bg-yellow-100 border border-yellow-300 rounded-xl p-4 shadow-md">
+  <h2 className="text-2xl font-bold mb-2">🛠 How to Generate a Meme</h2>
+  <ul className="list-disc list-inside text-left text-lg">
+    <li>📌 Select a meme template from the grid below.</li>
+    <li>✍️ Click <b>+ Add Text</b> to add text layers. Customize font size, color, and position.</li>
+    <li>🖱️ <b>Drag</b> the text on the meme to position it. <b>Scroll</b> to resize.</li>
+    <li>🎨 Customize the color and font size using sliders and color pickers.</li>
+    <li>💾 Save your meme as a <b>Draft</b> or <b>Publish</b> it directly to the feed.</li>
+    <li>📥 Optionally, click <b>Download Meme</b> to save it as an image.</li>
+  </ul>
+</div>
 
       <div className="grid grid-cols-5 gap-3 max-w-5xl w-full mb-6">
         {currentMemes.map((meme) => (

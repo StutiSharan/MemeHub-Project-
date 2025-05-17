@@ -9,7 +9,7 @@ const Footer = () => {
 
           {/* Branding & Description */}
           <div className="md:w-1/3 space-y-4">
-            <h2 className="text-2xl font-extrabold tracking-wide select-none">MemeHub</h2>
+            <h2 className="text-2xl font-extrabold tracking-wide select-none">JokeJunction</h2>
             <p className="text-gray-300 max-w-sm leading-relaxed">
               Your ultimate destination for meme culture — sharing, laughing, and connecting through the funniest content on the web.
             </p>

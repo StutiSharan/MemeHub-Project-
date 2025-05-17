@@ -36,6 +36,22 @@ const DEFAULT_TAGS = [
   "hilarious",
 ];
 
+const Toast = ({ message, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed bottom-5 right-5 bg-indigo-600 text-white px-6 py-3 rounded shadow-lg animate-fadeInOut z-[9999] flex items-center gap-3">
+      <span>{message}</span>
+      <button onClick={onClose} className="text-white font-bold">×</button>
+    </div>
+  );
+};
+
 function Feed() {
   const [memes, setMemes] = useState([]);
   const [filteredMemes, setFilteredMemes] = useState([]);
@@ -43,6 +59,7 @@ function Feed() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [activeTag, setActiveTag] = useState(null);
+   const [selectedMeme, setSelectedMeme] = useState(null);
   const [votes, setVotes] = useState(
     () => JSON.parse(localStorage.getItem("memeVotes")) || {}
   );
@@ -51,6 +68,67 @@ function Feed() {
   );
   const [allTags, setAllTags] = useState([]);
   const [user, setUser] = useState(null);
+
+   const [toastMessage, setToastMessage] = useState(null);
+
+  // Function to show toast messages
+  const showToast = (msg) => {
+    setToastMessage(msg);
+  };
+
+  const openMemeModal = (meme) => {
+    setSelectedMeme(meme);
+  };
+
+ // In Feed component
+const closeMemeModal = () => {
+  setSelectedMeme(null);
+  showToast("Meme modal closed");
+};
+
+
+  // Share meme image using Web Share API or fallback copy link
+  const shareMeme = async () => {
+    if (!selectedMeme) return;
+
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [] })) {
+        const response = await fetch(selectedMeme.url);
+        const blob = await response.blob();
+
+        const fileExtension = selectedMeme.url.split(".").pop().split(/\#|\?/)[0];
+        const fileName = `${selectedMeme.id || "meme"}.${fileExtension}`;
+        const file = new File([blob], fileName, { type: blob.type });
+
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: selectedMeme.title,
+            text: "Check out this meme!",
+          });
+          showToast("Meme shared successfully!");
+        } else {
+          showToast("Sharing files is not supported on this device.");
+        }
+      } else {
+        if (navigator.share) {
+          await navigator.share({
+            title: selectedMeme.title,
+            text: "Check out this meme!",
+            url: selectedMeme.url,
+          });
+          showToast("Meme shared successfully!");
+        } else {
+          await navigator.clipboard.writeText(selectedMeme.url);
+          showToast("Meme URL copied to clipboard!");
+        }
+      }
+    } catch (error) {
+      showToast("Sharing failed or was cancelled.");
+      console.error(error);
+    }
+  };
+
 
   // Track logged-in user
   useEffect(() => {
@@ -343,10 +421,16 @@ function Feed() {
             onTagClick={onTagClick}
             activeTag={activeTag}
             user={user}
+            onClickImage={() => openMemeModal(meme)} // Pass click handler here
           />
         ))}
       </div>
-
+ {toastMessage && (
+        <Toast
+          message={toastMessage}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
       {page * ITEMS_PER_PAGE < filteredMemes.length && (
         <div className="flex justify-center mt-8">
           <button
@@ -355,6 +439,42 @@ function Feed() {
           >
             Load More
           </button>
+        </div>
+      )}
+      {selectedMeme && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          onClick={closeMemeModal} // Close when clicking outside the box
+        >
+          <div
+            className="relative bg-white rounded-lg p-4 max-w-3xl w-full mx-4"
+            onClick={(e) => e.stopPropagation()} // Prevent closing modal on clicking inside
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeMemeModal}
+              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-3xl font-bold"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+
+            {/* Meme Image */}
+            <img
+              src={selectedMeme.url}
+              alt={selectedMeme.title}
+              className="w-full max-h-[80vh] object-contain rounded"
+              loading="lazy"
+            />
+
+            {/* Share Button */}
+            <button
+              onClick={shareMeme}
+              className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+            >
+              Share Meme
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -373,6 +493,7 @@ const MemeCard = ({
   onAddComment,
   onDeleteComment,
   onTagClick,
+  onClickImage,
   activeTag,
   user,
 }) => {
@@ -382,11 +503,12 @@ const MemeCard = ({
   return (
     <div className="bg-white p-5 rounded-xl shadow-lg flex flex-col">
       <img
-        src={meme.url}
-        alt={meme.title}
-        className="w-full object-cover aspect-[4/3]"
-        loading="lazy"
-      />
+  src={meme.url}
+  alt={meme.title}
+  className="w-full object-cover aspect-[4/3] cursor-pointer"  // add cursor-pointer for UX
+  loading="lazy"
+  onClick={onClickImage}  // add this!
+/>
       <div className="p-4 flex-grow flex flex-col">
         <div className="mb-1 flex items-center gap-2">
           <h3 className="font-bold text-lg text-indigo-700">{meme.title}</h3>
@@ -454,26 +576,26 @@ const MemeCard = ({
 
         {showComments && (
           <div className="flex flex-col gap-2">
-            {comments.map((c, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between bg-gray-100 rounded-md p-2"
-              >
-                <div>
-                  <span className="font-semibold">{c.displayName}: </span>
-                  <span>{c.text}</span>
-                </div>
-                {user?.uid === c.uid && (
-                  <button
-                    onClick={() => onDeleteComment(meme.id, i)}
-                    className="text-red-500 font-bold ml-4"
-                    title="Delete comment"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            ))}
+          {comments.map((c, i) => (
+  <div
+    key={i}
+    className="flex justify-between items-center bg-gray-100 rounded p-2"
+  >
+    <div>
+      <span className="font-semibold">{c.displayName || "Anon"}</span>:{" "}
+      <span>{c.text}</span>
+    </div>
+    {user && user.uid === c.uid && (
+      <button
+        onClick={() => onDeleteComment(meme.id, i)}
+        className="text-red-600 hover:text-red-800 font-bold"
+        title="Delete comment"
+      >
+        &times;
+      </button>
+    )}
+  </div>
+))}
             {user ? (
               <form
                 onSubmit={(e) => {
@@ -481,22 +603,31 @@ const MemeCard = ({
                   onAddComment(meme.id, commentText);
                   setCommentText("");
                 }}
-                className="flex gap-2 mt-2"
-              >
-                <input
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Add a comment"
-                  maxLength={140}
-                  className="flex-grow rounded-md border border-gray-300 px-3 py-1"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="bg-indigo-600 text-white px-4 py-1 rounded-md"
-                >
-                  Post
-                </button>
+                className="flex gap-2 mt-2">
+  <input
+    type="text"
+    placeholder="Add a comment..."
+    value={commentText}
+    onChange={(e) => setCommentText(e.target.value)}
+    className="flex-grow px-3 py-1 rounded border border-gray-300"
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        onAddComment(meme.id, commentText);
+        setCommentText("");
+      }
+    }}
+    disabled={!user}
+  />
+  <button
+    onClick={() => {
+      onAddComment(meme.id, commentText);
+      setCommentText("");
+    }}
+    disabled={!user || !commentText.trim()}
+    className="px-3 py-1 bg-indigo-600 text-white rounded disabled:opacity-50"
+  >
+    Post
+  </button>
               </form>
             ) : (
               <p className="text-sm text-gray-500">Login to comment</p>

@@ -27,17 +27,30 @@ const Dashboard = () => {
     setLoading(true);
     onValue(memesRef, (snapshot) => {
       if (snapshot.exists()) {
-        const memeList = Object.entries(snapshot.val()).map(([id, data]) => ({
-          id,
-          ...data,
-        }));
+        const memesData = snapshot.val();
+
+        const memeList = Object.entries(memesData).map(([id, data]) => {
+          const votesCount = data.votes ? Object.keys(data.votes).length : 0;
+          const commentsCount = data.comments ? Object.keys(data.comments).length : 0;
+
+          return {
+            id,
+            ...data,
+            votes: votesCount,
+            comments: commentsCount,
+            userId: data.userId || user.uid,
+          };
+        });
+
+        // No sorting here anymore
+
         setMemes(memeList);
       } else {
         setMemes([]);
       }
       setLoading(false);
     });
-  }, []);
+  }, [db]);
 
   const handleNavigateToUpload = () => navigate("/upload");
   const handleTogenerateMemes = () => navigate("/generate");
@@ -67,7 +80,6 @@ const Dashboard = () => {
       setEditMeme(null);
       setPopupMessage("✏️ Meme updated successfully!");
       setTimeout(() => setPopupMessage(""), 2000);
-      // Removed navigate("/login") because redirecting to login after edit seems unintended
     } catch (error) {
       console.error("Error updating meme:", error);
     }
@@ -90,8 +102,8 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Centered Buttons */}
-      <div className="flex justify-center gap-6 mb-10">
+      {/* Buttons */}
+      <div className="flex justify-center gap-6 mb-8">
         <button
           onClick={handleNavigateToUpload}
           className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md transform hover:scale-105 transition"
@@ -106,6 +118,8 @@ const Dashboard = () => {
         </button>
       </div>
 
+      {/* Removed Sort dropdown */}
+
       {/* Meme Gallery */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {memes.map((meme) => (
@@ -119,8 +133,16 @@ const Dashboard = () => {
               className="w-full h-auto rounded-md object-cover"
             />
             <p className="text-center font-semibold text-gray-800 mt-3 text-lg">
-              {meme.caption} 🤣🔥
+              {meme.caption}
             </p>
+
+           
+            {/* Optional: Creation date */}
+            {meme.createdAt && (
+              <p className="text-xs text-center text-gray-500 mt-1">
+                📅 {new Date(meme.createdAt).toLocaleDateString()}
+              </p>
+            )}
 
             {/* Edit/Delete buttons */}
             {auth.currentUser?.uid === meme.userId && (
