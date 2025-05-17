@@ -9,3 +9,6 @@ const Loading = () => {
 };
 
 export default Loading;
+export const SkeletonLoader = () => (
+  <div className="bg-gray-300 animate-pulse h-40 rounded-lg"></div>
+);
