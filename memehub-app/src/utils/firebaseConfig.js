@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import {getDatabase} from "firebase/database"
 const firebaseConfig = {
   apiKey: "AIzaSyDRCGFXgTsPaJhlNp7mFwDENBLZRFlb9Ik",
   authDomain: "memehub-c5222.firebaseapp.com",
@@ -15,4 +16,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
-export { auth, analytics, logEvent };
+const database = getDatabase(app);
+export { auth, analytics, logEvent,database };

@@ -45,15 +45,17 @@ const UploadMeme = () => {
       // Save to user-specific memes
       const userRef = dbRef(db, `memes/${user.uid}`);
       const newUserMemeRef = push(userRef);
-      const memeData = {
-        userId: user.uid,
-        imageBase64: base64Image,
-        caption,
-        hashtags,
-        likes: 0,
-        visibility,
-        timestamp: serverTimestamp(),
-      };
+     const memeData = {
+  userId: user.uid,
+  userName: user.email ? user.email.split("@")[0] : "Anonymous", // email prefix
+  imageBase64: base64Image,
+  caption,
+  hashtags,
+  likes: 0,
+  visibility,
+  timestamp: serverTimestamp(),
+};
+
       await set(newUserMemeRef, memeData);
 
       // If public, also store in public feed

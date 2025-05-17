@@ -15,7 +15,7 @@ const Home = () => {
 
       {/* Welcome Section */}
       <div className="text-center space-y-5 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-2xl p-10 shadow-lg">
-        <h1 className="text-5xl font-extrabold text-indigo-700 drop-shadow-md hover:scale-105 transition duration-300">
+        <h1 className="text-4xl font-extrabold text-indigo-700 drop-shadow-md hover:scale-105 transition duration-300 text-center">
           Welcome to JokeJunction
         </h1>
 

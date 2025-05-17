@@ -2,15 +2,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
 import { getDatabase, ref, get } from "firebase/database";
-import Loading from "../components/Loader";
 
 const TABS = [
-  { key: "new", label: "New", api: null }, // No Reddit API for new tab
   {
     key: "top24",
     label: "Top (24h)",
     api: "https://www.reddit.com/r/memes/top.json?limit=50&t=day",
   },
+  { key: "new", label: "New", api: null },
   {
     key: "topWeek",
     label: "Top (Week)",
@@ -64,7 +63,6 @@ function Feed() {
       try {
         let redditMemes = [];
 
-        // Fetch Reddit memes only if not "new" tab
         if (tab.key !== "new" && tab.api) {
           const res = await fetch(tab.api);
           const json = await res.json();
@@ -94,7 +92,7 @@ function Feed() {
                   url: post.url,
                   author: post.author,
                   ups: post.ups,
-                  created_utc: post.created_utc * 1000, // convert seconds to ms
+                  created_utc: post.created_utc * 1000,
                   hashtags,
                   source: "reddit",
                 };
@@ -102,7 +100,6 @@ function Feed() {
           }
         }
 
-        // Fetch Firebase memes only for "new" tab from /publicMemes node
         let firebaseMemes = [];
         if (tab.key === "new") {
           const db = getDatabase();
@@ -113,7 +110,10 @@ function Feed() {
               id,
               title: post.title,
               url: post.imageBase64,
-              author: post.author || "anonymous",
+              author:
+                user?.displayName ||
+                user?.email?.split("@")[0] ||
+                "anonymous",
               ups: post.ups || 0,
               created_utc: post.timestamp || Date.now(),
               hashtags: post.tags || ["funny"],
@@ -122,7 +122,6 @@ function Feed() {
           }
         }
 
-        // Combine and sort by newest first
         const combined = [...redditMemes, ...firebaseMemes].sort(
           (a, b) => b.created_utc - a.created_utc
         );
@@ -143,7 +142,7 @@ function Feed() {
     }
 
     fetchMemes();
-  }, [tab]);
+  }, [tab, user]); // added user because we use user.displayName in firebase memes
 
   useEffect(() => {
     let filtered = memes;
@@ -173,16 +172,45 @@ function Feed() {
     localStorage.setItem("memeComments", JSON.stringify(comments));
   }, [comments]);
 
-  const handleVote = useCallback((id, vote) => {
-    setVotes((prev) => {
-      if (prev[id] === vote) {
-        const copy = { ...prev };
-        delete copy[id];
-        return copy;
-      }
-      return { ...prev, [id]: vote };
-    });
-  }, []);
+  // votes shape: { memeId: { userId: 1 or -1 } }
+  // Calculate total vote count for a meme
+  const getTotalVotes = (memeId) => {
+    if (!votes[memeId]) return 0;
+    return Object.values(votes[memeId]).reduce((sum, v) => sum + v, 0);
+  };
+
+  // Get current user's vote on a meme (0 if none)
+  const getUserVote = (memeId) => {
+    if (!user) return 0;
+    return votes[memeId]?.[user.uid] || 0;
+  };
+
+  const handleVote = useCallback(
+    (memeId, voteValue) => {
+      if (!user) return; // only logged-in users can vote
+
+      setVotes((prev) => {
+        const memeVotes = prev[memeId] || {};
+        const currentUserVote = memeVotes[user.uid] || 0;
+
+        let updatedMemeVotes = { ...memeVotes };
+
+        if (currentUserVote === voteValue) {
+          // If user clicks the same vote, remove vote (toggle off)
+          delete updatedMemeVotes[user.uid];
+        } else {
+          // Otherwise, set the new vote
+          updatedMemeVotes[user.uid] = voteValue;
+        }
+
+        return {
+          ...prev,
+          [memeId]: updatedMemeVotes,
+        };
+      });
+    },
+    [user]
+  );
 
   const getDisplayName = (user) => {
     if (user.displayName) return user.displayName;
@@ -298,7 +326,8 @@ function Feed() {
           <MemeCard
             key={meme.id}
             meme={meme}
-            vote={votes[meme.id] || 0}
+            totalVotes={getTotalVotes(meme.id)}
+            userVote={getUserVote(meme.id)}
             onVote={handleVote}
             comments={comments[meme.id] || []}
             onAddComment={handleAddComment}
@@ -329,7 +358,8 @@ export default Feed;
 // MemeCard Component
 const MemeCard = ({
   meme,
-  vote,
+  totalVotes,
+  userVote,
   onVote,
   comments,
   onAddComment,
@@ -350,16 +380,19 @@ const MemeCard = ({
         loading="lazy"
       />
       <div className="p-4 flex-grow flex flex-col">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="mb-1 flex items-center gap-2">
           <h3 className="font-bold text-lg text-indigo-700">{meme.title}</h3>
-          {/* Highlight recent Firebase posts (last 24h) */}
           {meme.source === "firebase" &&
             Date.now() - meme.created_utc < 24 * 60 * 60 * 1000 && (
-              <span className="text-xs bg-yellow-300 text-black px-2 py-0.5 rounded-full animate-pulse">
+              <span className="text-xs bg-yellow-300 text-black px-2 py-0.5 rounded-full animate-pulse ml-2">
                 New
               </span>
             )}
         </div>
+        <p className="text-sm text-gray-500 mb-2">
+          Posted by{" "}
+          <span className="font-medium text-indigo-700">@{meme.author}</span>
+        </p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
@@ -382,45 +415,50 @@ const MemeCard = ({
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={() => onVote(meme.id, 1)}
-            className={`p-2 rounded-full ${
-              vote === 1 ? "bg-green-500 text-white" : "bg-gray-200"
+            disabled={!user}
+            className={`p-2 rounded-full transition ${
+              userVote === 1 ? "bg-green-500 text-white" : "bg-gray-200"
             }`}
+            title={user ? "Upvote" : "Login to vote"}
           >
             👍
           </button>
           <button
             onClick={() => onVote(meme.id, -1)}
-            className={`p-2 rounded-full ${
-              vote === -1 ? "bg-red-500 text-white" : "bg-gray-200"
+            disabled={!user}
+            className={`p-2 rounded-full transition ${
+              userVote === -1 ? "bg-red-500 text-white" : "bg-gray-200"
             }`}
+            title={user ? "Downvote" : "Login to vote"}
           >
             👎
           </button>
-          <span>Votes: {vote}</span>
+          <span className="font-semibold">Total Votes: {totalVotes}</span>
         </div>
 
         {/* Comments */}
         <button
-          onClick={() => setShowComments(!showComments)}
-          className="text-indigo-600 font-semibold"
+          onClick={() => setShowComments((show) => !show)}
+          className="mb-3 text-indigo-700 hover:underline self-start"
         >
-          {showComments ? "Hide" : "Show"} Comments ({comments.length})
+          {showComments ? "Hide Comments" : `Comments (${comments.length})`}
         </button>
+
         {showComments && (
-          <div className="mt-3 flex flex-col gap-2 max-h-48 overflow-y-auto">
+          <div className="flex flex-col gap-2">
             {comments.map((c, i) => (
               <div
                 key={i}
-                className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
+                className="flex items-center justify-between bg-gray-100 rounded-md p-2"
               >
                 <div>
-                  <span className="font-semibold">{c.displayName}:</span>{" "}
-                  {c.text}
+                  <span className="font-semibold">{c.displayName}: </span>
+                  <span>{c.text}</span>
                 </div>
                 {user?.uid === c.uid && (
                   <button
                     onClick={() => onDeleteComment(meme.id, i)}
-                    className="text-red-600 hover:text-red-800 font-bold"
+                    className="text-red-500 font-bold ml-4"
                     title="Delete comment"
                   >
                     ✕
@@ -432,32 +470,28 @@ const MemeCard = ({
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (commentText.trim()) {
-                    onAddComment(meme.id, commentText);
-                    setCommentText("");
-                  }
+                  onAddComment(meme.id, commentText);
+                  setCommentText("");
                 }}
-                className="mt-2 flex gap-2"
+                className="flex gap-2 mt-2"
               >
                 <input
-                  type="text"
                   value={commentText}
-                  maxLength={140}
-                  placeholder="Add a comment..."
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="flex-grow px-3 py-2 border rounded-md"
+                  placeholder="Add a comment"
+                  maxLength={140}
+                  className="flex-grow rounded-md border border-gray-300 px-3 py-1"
+                  required
                 />
                 <button
                   type="submit"
-                  className="bg-indigo-600 text-white px-4 rounded-md"
+                  className="bg-indigo-600 text-white px-4 py-1 rounded-md"
                 >
                   Post
                 </button>
               </form>
             ) : (
-              <div className="text-sm italic text-gray-500 mt-2">
-                Log in to comment
-              </div>
+              <p className="text-sm text-gray-500">Login to comment</p>
             )}
           </div>
         )}
