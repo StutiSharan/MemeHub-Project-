@@ -116,12 +116,12 @@ const Navbar = () => {
           className="md:hidden text-white text-2xl"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? "✕" : "☰"} {/* Menu Icon */}
+          {menuOpen ? "" : "☰"} {/* Menu Icon */}
         </button>
         {/* 🏆 Mobile Sidebar (Visible when `menuOpen === true`) */}
         {menuOpen && (
           <div className="fixed inset-0  bg-opacity-50 z-50 flex">
-            <div className="w-3/4 bg-purple-400 p-6 flex flex-col space-y-6">
+            <div className="w-3/4 bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 text-white py-10 shadow-inner  p-6 flex flex-col space-y-6">
               <button
                 onClick={() => setMenuOpen(false)}
                 className="self-end text-black bg-gray-300 rounded-full px-2 text-2xl"
@@ -133,7 +133,7 @@ const Navbar = () => {
                   <NavLink
                     key={name}
                     to={path}
-                    className="text-lg font-semibold text-gray-900 hover:text-indigo-700"
+                    className="text-lg font-semibold text-white hover:text-indigo-700"
                     onClick={() => setMenuOpen(false)}
                   >
                     {name}
@@ -142,7 +142,7 @@ const Navbar = () => {
                 {user && (
                   <NavLink
                     to="/dashboard"
-                    className="text-lg text-black font-semibold"
+                    className="text-lg text-white font-semibold"
                     onClick={() => setMenuOpen(false)}
                   >
                     Dashboard
