@@ -5,77 +5,81 @@ import MemeCarousel from '../components/MemeCarousel';
 import { Link } from 'react-router-dom';
 import { FaFireAlt, FaCrown, FaRocket } from 'react-icons/fa';
 import { ArrowRight } from 'lucide-react';
+import { getAuth } from 'firebase/auth';
 
 const Home = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   const memeOfTheDay = memes[0];
   const topMemes = memes.slice(1, 6);
+  const redirectLink = user ? '/feed' : '/signup';
 
   return (
-   <div className="space-y-12 px-4 md:px-8 lg:px-16 py-4 bg-blue-50 min-h-screen">
+    <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">
+
+      {/* 🎉 Marquee Banner */}
+      <div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full overflow-hidden shadow-lg mb-6">
+        <p className="animate-marquee text-sm sm:text-lg flex gap-4 whitespace-nowrap">
+          🥳 Welcome to Meme Madness Central! 🚀 Post memes, earn badges, conquer the leaderboard! 😂🔥💀👑
+        </p>
+      </div>
+
+      {/* 🌀 Logo + Title */}
+      <div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-8 sm:mb-10">
+        <div className="text-4xl sm:text-6xl animate-spin-slow">🤣</div>
+        <h1 className="text-3xl sm:text-6xl font-black tracking-wide text-center">JokeJunction</h1>
+      </div>
 
       {/* Welcome Section */}
-      <div className="text-center space-y-5 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-2xl p-10 shadow-lg">
-        <h1 className="text-4xl font-extrabold text-indigo-700 drop-shadow-md hover:scale-105 transition duration-300 text-center">
-          Welcome to JokeJunction
-        </h1>
-
-        <p className="text-lg text-gray-700 max-w-3xl mx-auto hover:text-indigo-600 transition-colors duration-300">
-          JokeJunction is your ultimate destination for sharing, discovering, and celebrating internet culture through memes.
-          Whether you're a seasoned meme-lord or a casual scroller, this is the platform where humor meets community.
+      <div className="text-center space-y-4 sm:space-y-5 bg-gradient-to-r from-pink-700 via-purple-800 to-indigo-700 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl border-2 sm:border-4 border-yellow-300">
+        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-yellow-300 drop-shadow-lg">
+          Enter the Meme Realm
+        </h2>
+        <p className="text-sm sm:text-base lg:text-lg text-yellow-100 max-w-xl mx-auto">
+          Dive headfirst into the ultimate meme carnival. From dank to goofy, viral to niche — we've got it all.
+          Feel the chaos, ride the hype, and let your funny bone run wild.
         </p>
-
-        <p className="text-lg text-gray-700 max-w-3xl mx-auto hover:text-purple-600 transition-colors duration-300">
-          Explore daily highlights, top trending posts, and climb the leaderboard as a content creator.
-          Unlock exclusive badges, connect with fellow meme enthusiasts, and fuel the fun — one meme at a time.
-        </p>
-
-        {/* CTA Button */}
         <Link
           to="/feed"
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 mt-4 rounded-full text-base font-semibold transition-all duration-200 shadow-md hover:shadow-xl hover:scale-105"
+          className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-yellow-500 hover:to-pink-600 text-indigo-900 px-6 sm:px-8 py-3 sm:py-4 mt-4 rounded-full text-lg sm:text-xl font-extrabold shadow-xl transition-transform duration-300"
         >
-          Browse Feed <ArrowRight size={18} />
+          Start Meme-ing <ArrowRight size={20} />
         </Link>
       </div>
 
       {/* Meme of the Day + Carousel */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
         {/* Meme of the Day */}
-        <div className="relative bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-3xl p-1 shadow-xl hover:shadow-2xl transition-shadow duration-500 cursor-pointer">
-          <div className="bg-white rounded-3xl p-6 flex flex-col items-center">
-            {/* Featured Badge */}
-            <div className="absolute -top-3 left-4 bg-yellow-400 text-indigo-900 font-bold px-4 py-1 rounded-full shadow-lg text-sm select-none tracking-wider uppercase">
+        <div className="relative bg-gradient-to-br from-pink-600 via-purple-700 to-indigo-800 rounded-2xl sm:rounded-3xl p-1 sm:p-2 shadow-xl border-2 sm:border-4 border-yellow-300 transition duration-500">
+          <div className="bg-black bg-opacity-70 rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col items-center relative">
+            <div className="absolute -top-4 left-4 bg-yellow-400 text-indigo-900 font-bold px-4 py-1 rounded-full shadow text-xs sm:text-sm uppercase">
               Featured
             </div>
-
-            {/* Title */}
-            <h2 className="text-3xl md:text-4xl font-extrabold text-indigo-900 mb-4 drop-shadow-md">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-yellow-300 mb-4 sm:mb-6 drop-shadow">
               Meme of the Day
-            </h2>
-
-            {/* MemeCard wrapper */}
-            <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-lg hover:scale-105 transform transition duration-500">
-              <div className="absolute inset-0 bg-gradient-to-tr from-indigo-300 via-purple-300 to-pink-300 opacity-20 blur-xl pointer-events-none rounded-2xl"></div>
-              <Link to="/signup" tabIndex={-1} className="block">
+            </h3>
+            <div className="transform transition duration-300 shadow-yellow-300 shadow-md rounded-2xl overflow-hidden w-full">
+              <Link to={redirectLink} tabIndex={-1}>
                 <MemeCard meme={memeOfTheDay} highlight={true} />
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Meme Carousel Section */}
-        <div className="bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
-          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Top Trending Memes</h2>
+        {/* Meme Carousel */}
+        <div className="bg-black bg-opacity-60 p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-yellow-400 shadow-md transition duration-300">
+          <h3 className="text-2xl sm:text-3xl font-extrabold mb-4 text-yellow-300 tracking-wide">Top Trending Memes</h3>
           <MemeCarousel memes={memes.slice(2, 8)} />
         </div>
       </section>
 
       {/* Weekly Leaderboard */}
-      <section className="bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
-        <h2 className="text-2xl font-bold mb-4 text-indigo-700">Weekly Leaderboard</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <section className="bg-black bg-opacity-50 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-yellow-400 shadow-lg transition duration-300">
+        <h3 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-yellow-300 tracking-wide">Weekly Leaderboard</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {topMemes.map((meme) => (
-            <Link key={meme.id} to="/signup" className="block">
+            <Link key={meme.id} to={redirectLink} className="block transform transition-transform duration-300">
               <MemeCard meme={meme} />
             </Link>
           ))}
@@ -83,49 +87,45 @@ const Home = () => {
       </section>
 
       {/* Badge System */}
-     <section className="bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300">
-  <h2 className="text-2xl font-bold mb-6 text-indigo-700">Badge System</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {/* First Viral Post Badge */}
-    <div className="group bg-white rounded-xl p-5 shadow hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer border-l-4 border-red-500">
-      <div className="flex items-center gap-4">
-        <div className="text-red-500 text-3xl">
-          <FaFireAlt />
-        </div>
-        <div>
-          <h4 className="text-lg font-bold text-indigo-900 group-hover:text-red-600 transition">First Viral Post</h4>
-          <p className="text-sm text-gray-600 group-hover:text-gray-800 transition">Your first meme to hit 1k+ views.</p>
-        </div>
-      </div>
-    </div>
+      <section className="bg-black bg-opacity-40 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-yellow-400 shadow-md transition duration-300">
+        <h3 className="text-2xl sm:text-3xl font-extrabold mb-6 text-yellow-300 tracking-wide">Badge System</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
 
-    {/* Weekly Winner Badge */}
-    <div className="group bg-white rounded-xl p-5 shadow hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer border-l-4 border-yellow-400">
-      <div className="flex items-center gap-4">
-        <div className="text-yellow-400 text-3xl">
-          <FaCrown />
-        </div>
-        <div>
-          <h4 className="text-lg font-bold text-indigo-900 group-hover:text-yellow-500 transition">Weekly Winner</h4>
-          <p className="text-sm text-gray-600 group-hover:text-gray-800 transition">Top meme in a 7-day span.</p>
-        </div>
-      </div>
-    </div>
+          {/* Badge 1 */}
+          <div className="group bg-yellow-400 bg-opacity-20 rounded-xl p-5 shadow border-l-4 sm:border-l-8 border-red-500">
+            <div className="flex items-center gap-4">
+              <div className="text-red-600 text-3xl sm:text-4xl"><FaFireAlt /></div>
+              <div>
+                <h4 className="text-lg sm:text-2xl font-extrabold text-red-600">First Viral Post</h4>
+                <p className="text-sm sm:text-lg text-yellow-50">Your first meme to hit 1k+ views.</p>
+              </div>
+            </div>
+          </div>
 
-    {/* 10K Views Club Badge */}
-    <div className="group bg-white rounded-xl p-5 shadow hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer border-l-4 border-purple-600">
-      <div className="flex items-center gap-4">
-        <div className="text-purple-600 text-3xl">
-          <FaRocket />
+          {/* Badge 2 */}
+          <div className="group bg-yellow-400 bg-opacity-20 rounded-xl p-5 shadow border-l-4 sm:border-l-8 border-yellow-400">
+            <div className="flex items-center gap-4">
+              <div className="text-orange-800 text-3xl sm:text-4xl"><FaCrown /></div>
+              <div>
+                <h4 className="text-lg sm:text-2xl font-extrabold text-orange-600">Weekly Winner</h4>
+                <p className="text-sm sm:text-lg text-yellow-50">Top meme in a 7-day span.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Badge 3 */}
+          <div className="group bg-yellow-400 bg-opacity-20 rounded-xl p-5 shadow border-l-4 sm:border-l-8 border-purple-600">
+            <div className="flex items-center gap-4">
+              <div className="text-purple-600 text-3xl sm:text-4xl"><FaRocket /></div>
+              <div>
+                <h4 className="text-lg sm:text-2xl font-extrabold text-purple-500">10K Views Club</h4>
+                <p className="text-sm sm:text-lg text-yellow-50">Exclusive club for viral creators.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div>
-          <h4 className="text-lg font-bold text-indigo-900 group-hover:text-purple-700 transition">10K Views Club</h4>
-          <p className="text-sm text-gray-600 group-hover:text-gray-800 transition">Exclusive club for viral creators.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
     </div>
   );
 };

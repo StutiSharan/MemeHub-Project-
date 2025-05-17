@@ -80,12 +80,9 @@ function Feed() {
     setSelectedMeme(meme);
   };
 
- // In Feed component
-const closeMemeModal = () => {
-  setSelectedMeme(null);
-  showToast("Meme modal closed");
-};
-
+  const closeMemeModal = () => {
+    setSelectedMeme(null);
+  };
 
   // Share meme image using Web Share API or fallback copy link
   const shareMeme = async () => {
