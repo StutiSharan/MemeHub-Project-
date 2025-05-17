@@ -31,52 +31,9 @@ const MemeChart = ({ votes }) => {
 
   useEffect(() => {
     voteDataRef.current =
-      voteDataRef.current.length === 20 ? voteDataRef.current : Array(20).fill(votes);
-=======
-// <<<<<<< HEAD
-import React, { useEffect, useState } from "react";
-import { getAuth } from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
-import { Line } from "react-chartjs-2";
-import moment from "moment";
-// =======
-// AnalyticsTracker.jsx
-import { useLocation } from "react-router-dom";
-import { analytics } from "../utils/firebaseConfig";
-import {
-  logEvent as firebaseLogEvent,
-  setUserProperties,
-} from "firebase/analytics";
-// >>>>>>> ee79e1bb371df6bea045799c8aa16f6e060304ef
-
-// 🔁 Automatically track page views on route change
-const Analytics = () => {
-  // <<<<<<< HEAD
-  const [memes, setMemes] = useState([]);
-  const auth = getAuth();
-  const db = getFirestore();
-  const location = useLocation();
-
-  useEffect(() => {
-    const fetchMemes = async () => {
-      const q = query(
-        collection(db, "memes"),
-        where("postedBy", "==", auth.currentUser)
-      );
-      const snapshot = await getDocs(q);
-      const memeData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setMemes(memeData);
-    };
->>>>>>> b9ba04d30735dff4a944a67791c9d2fe48fa6b16
+      voteDataRef.current.length === 20
+        ? voteDataRef.current
+        : Array(20).fill(votes);
 
     setChartData({
       labels: Array.from({ length: 20 }, (_, i) => `T-${19 - i}`),
@@ -249,9 +206,9 @@ const Analytics = () => {
             className="bg-white shadow-md p-4 rounded-xl border"
           >
             <div className="flex items-center space-x-4 mb-3">
-              {meme.imageBase64||meme.image ? (
+              {meme.imageBase64 ? (
                 <img
-                  src={meme.imageBase64||meme.image}
+                  src={meme.imageBase64}
                   alt="Meme"
                   className="w-20 h-20 rounded-lg object-cover"
                 />
@@ -275,54 +232,10 @@ const Analytics = () => {
                     "No hashtags"}
                 </p>
               </div>
-=======
-  useEffect(() => {
-    firebaseLogEvent(analytics, "page_view", {
-      page_path: location.pathname,
-    });
-  }, [location]);
-  return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6">Your Meme Analytics</h2>
-      {memes.map((meme) => (
-        <div key={meme.id} className="bg-white shadow rounded-lg p-4 mb-6">
-          <div className="flex justify-between items-center">
-            <img
-              src={meme.imageUrl}
-              alt={meme.title}
-              className="w-24 h-24 object-cover rounded"
-            />
-            <div className="ml-4">
-              <h3 className="text-xl font-semibold">{meme.title}</h3>
-              <p>🕒 {moment(meme.timestamp).fromNow()}</p>
-              <p>👀 Views: {meme.views}</p>
-              <p>👍 Upvotes: {meme.upvotes}</p>
-              <p>👎 Downvotes: {meme.downvotes}</p>
-              <p>📊 Net: {meme.upvotes - meme.downvotes}</p>
             </div>
-          </div>
-
-          {meme.engagementHistory && (
-            <div className="mt-4">
-              <Line
-                data={{
-                  labels: meme.engagementHistory.map((e) =>
-                    moment(e.time).format("HH:mm")
-                  ),
-                  datasets: [
-                    {
-                      label: "Views",
-                      data: meme.engagementHistory.map((e) => e.views),
-                      fill: false,
-                      borderColor: "#6366f1",
-                      tension: 0.4,
-                    },
-                  ],
-                }}
-              />
->>>>>>> b9ba04d30735dff4a944a67791c9d2fe48fa6b16
-            </div>
-            <p className="font-bold text-green-600 text-lg">🗳 Votes: {meme.votes}</p>
+            <p className="font-bold text-green-600 text-lg">
+              🗳 Votes: {meme.votes}
+            </p>
 
             <MemeChart votes={meme.votes} />
           </div>
