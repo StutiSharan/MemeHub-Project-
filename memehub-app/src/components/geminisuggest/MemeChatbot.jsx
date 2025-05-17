@@ -118,7 +118,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
   return (
     <div
       ref={chatWindowRef}
-      className={`fixed bottom-20 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 
+      className={`fixed bottom-10 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 
       overflow-hidden transition-all duration-300 ease-in-out backdrop-blur-lg 
       dark:bg-gray-900 dark:border-gray-700 
       ${isMinimized ? "h-14" : "h-[500px]"}`}
