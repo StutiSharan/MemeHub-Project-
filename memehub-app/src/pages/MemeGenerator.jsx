@@ -3,14 +3,34 @@ import html2canvas from "html2canvas";
 import { useNavigate } from "react-router-dom";
 import { database, auth } from "../utils/firebaseConfig"; // Update path as needed
 import { ref, push } from "firebase/database";
+import MemeChatbot from "../components/geminisuggest/MemeChatbot";
 
 export default function MemeGenerator() {
   const [memes, setMemes] = useState([]);
+  const [isChatOpen, setChatOpen] = useState(false);
   const [selectedMeme, setSelectedMeme] = useState(null);
   const [texts, setTexts] = useState([
-    { id: "top", text: "", color: "#ffffff", pos: { x: 150, y: 40 }, fontSize: 28 },
-    { id: "middle", text: "", color: "#ffffff", pos: { x: 150, y: 150 }, fontSize: 28 },
-    { id: "bottom", text: "", color: "#ffffff", pos: { x: 150, y: 280 }, fontSize: 28 },
+    {
+      id: "top",
+      text: "",
+      color: "#ffffff",
+      pos: { x: 150, y: 40 },
+      fontSize: 28,
+    },
+    {
+      id: "middle",
+      text: "",
+      color: "#ffffff",
+      pos: { x: 150, y: 150 },
+      fontSize: 28,
+    },
+    {
+      id: "bottom",
+      text: "",
+      color: "#ffffff",
+      pos: { x: 150, y: 280 },
+      fontSize: 28,
+    },
   ]);
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
@@ -26,7 +46,10 @@ export default function MemeGenerator() {
 
   const memesPerPage = 10;
   const totalPages = Math.ceil(memes.length / memesPerPage);
-  const currentMemes = memes.slice(currentPage * memesPerPage, (currentPage + 1) * memesPerPage);
+  const currentMemes = memes.slice(
+    currentPage * memesPerPage,
+    (currentPage + 1) * memesPerPage
+  );
 
   function handleMouseDown(e, id) {
     e.preventDefault();
@@ -75,11 +98,15 @@ export default function MemeGenerator() {
   }
 
   function handleTextChange(id, val) {
-    setTexts((prev) => prev.map((t) => (t.id === id ? { ...t, text: val } : t)));
+    setTexts((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, text: val } : t))
+    );
   }
 
   function handleColorChange(id, val) {
-    setTexts((prev) => prev.map((t) => (t.id === id ? { ...t, color: val } : t)));
+    setTexts((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, color: val } : t))
+    );
   }
 
   function handleFontSizeChange(id, val) {
@@ -125,57 +152,71 @@ export default function MemeGenerator() {
   };
 
   const saveMeme = async (status) => {
-  if (!selectedMeme) {
-    alert("Please select a meme template first.");
-    return;
-  }
-
-  const memeElement = document.getElementById("meme");
-  const canvas = await html2canvas(memeElement, { useCORS: true, scale: 2 });
-  const imageBase64 = canvas.toDataURL("image/png");
-
-  const user = auth.currentUser;
-
-  const memeData = {
-    image: imageBase64,
-    texts: texts.filter(t => t.text.trim() !== ""),
-    createdAt: new Date().toISOString(),
-    author: user ? { uid: user.uid, email: user.email || null } : null,
-  };
-
-  if (status === "draft") {
-    const savedMemes = JSON.parse(localStorage.getItem("memeDrafts")) || [];
-    savedMemes.push({ ...memeData, id: `meme-${Date.now()}` });
-    localStorage.setItem("memeDrafts", JSON.stringify(savedMemes));
-    alert("Meme saved as draft!");
-  } else {
-    try {
-      await push(ref(database, "publicMemes"), memeData);
-      alert("Meme published to feed!");
-      navigate("/feed");
-    } catch (error) {
-      console.error("Error publishing meme:", error);
-      alert("Failed to publish meme. Please try again.");
+    if (!selectedMeme) {
+      alert("Please select a meme template first.");
+      return;
     }
-  }
-};
+
+    const memeElement = document.getElementById("meme");
+    const canvas = await html2canvas(memeElement, { useCORS: true, scale: 2 });
+    const imageBase64 = canvas.toDataURL("image/png");
+
+    const user = auth.currentUser;
+
+    const memeData = {
+      image: imageBase64,
+      texts: texts.filter((t) => t.text.trim() !== ""),
+      createdAt: new Date().toISOString(),
+      author: user ? { uid: user.uid, email: user.email || null } : null,
+    };
+
+    if (status === "draft") {
+      const savedMemes = JSON.parse(localStorage.getItem("memeDrafts")) || [];
+      savedMemes.push({ ...memeData, id: `meme-${Date.now()}` });
+      localStorage.setItem("memeDrafts", JSON.stringify(savedMemes));
+      alert("Meme saved as draft!");
+    } else {
+      try {
+        await push(ref(database, "publicMemes"), memeData);
+        alert("Meme published to feed!");
+        navigate("/feed");
+      } catch (error) {
+        console.error("Error publishing meme:", error);
+        alert("Failed to publish meme. Please try again.");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-100 px-4 text-white p-6 flex flex-col items-center">
       <h1 className="text-4xl font-extrabold mb-6 tracking-wide text-yellow-800 drop-shadow-lg">
         Meme Templates
       </h1>
-<div className="mb-6 max-w-3xl text-center text-yellow-900 bg-yellow-100 border border-yellow-300 rounded-xl p-4 shadow-md">
-  <h2 className="text-2xl font-bold mb-2">🛠 How to Generate a Meme</h2>
-  <ul className="list-disc list-inside text-left text-lg">
-    <li>📌 Select a meme template from the grid below.</li>
-    <li>✍️ Click <b>+ Add Text</b> to add text layers. Customize font size, color, and position.</li>
-    <li>🖱️ <b>Drag</b> the text on the meme to position it. <b>Scroll</b> to resize.</li>
-    <li>🎨 Customize the color and font size using sliders and color pickers.</li>
-    <li>💾 Save your meme as a <b>Draft</b> or <b>Publish</b> it directly to the feed.</li>
-    <li>📥 Optionally, click <b>Download Meme</b> to save it as an image.</li>
-  </ul>
-</div>
+      <div className="mb-6 max-w-3xl text-center text-yellow-900 bg-yellow-100 border border-yellow-300 rounded-xl p-4 shadow-md">
+        <h2 className="text-2xl font-bold mb-2">🛠 How to Generate a Meme</h2>
+        <ul className="list-disc list-inside text-left text-lg">
+          <li>📌 Select a meme template from the grid below.</li>
+          <li>
+            ✍️ Click <b>+ Add Text</b> to add text layers. Customize font size,
+            color, and position.
+          </li>
+          <li>
+            🖱️ <b>Drag</b> the text on the meme to position it. <b>Scroll</b> to
+            resize.
+          </li>
+          <li>
+            🎨 Customize the color and font size using sliders and color
+            pickers.
+          </li>
+          <li>
+            💾 Save your meme as a <b>Draft</b> or <b>Publish</b> it directly to
+            the feed.
+          </li>
+          <li>
+            📥 Optionally, click <b>Download Meme</b> to save it as an image.
+          </li>
+        </ul>
+      </div>
 
       <div className="grid grid-cols-5 gap-3 max-w-5xl w-full mb-6">
         {currentMemes.map((meme) => (
@@ -185,7 +226,9 @@ export default function MemeGenerator() {
             alt={meme.name}
             title={meme.name}
             className={`cursor-pointer w-full aspect-square object-cover rounded-lg border-4 transition-transform duration-200 hover:scale-105 hover:border-yellow-400 ${
-              selectedMeme === meme.url ? "border-yellow-400" : "border-transparent"
+              selectedMeme === meme.url
+                ? "border-yellow-400"
+                : "border-transparent"
             }`}
             onClick={() => setSelectedMeme(meme.url)}
             loading="lazy"
@@ -212,6 +255,19 @@ export default function MemeGenerator() {
           Next
         </button>
       </div>
+
+      <button
+        onClick={() => setChatOpen(true)}
+        className="bg-purple-800 text-white p-2 rounded hover:bg-purple-500"
+      >
+        Open Meme Chatbot 🤖
+      </button>
+      <MemeChatbot
+        isOpen={isChatOpen}
+        onClose={() => setChatOpen(false)}
+        templateName={selectedMeme?.name}
+      />
+      <br />
 
       {selectedMeme && (
         <div className="flex flex-col md:flex-row items-start md:space-x-12 max-w-5xl w-full">
