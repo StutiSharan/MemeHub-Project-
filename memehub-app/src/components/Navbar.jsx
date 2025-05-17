@@ -53,7 +53,7 @@ const Navbar = () => {
           <img
             src="/logo.png"
             alt="JokeJunction Logo"
-            className="w-26 h-26 mb-0" // Increased size, removed bottom margin
+            className="w-16 h-16 mb-0" // Increased size, removed bottom margin
           />
           <span className="-mt-4 mb-2">JokeJunction</span>{" "}
           {/* Optional: slight shift up if needed */}
@@ -129,7 +129,6 @@ const Navbar = () => {
                   key={name}
                   to={path}
                   className="text-lg font-semibold text-gray-900 hover:text-indigo-700"
-                  onClick={() => setMenuOpen(fal)}
                 >
                   {name}
                 </NavLink>

@@ -49,6 +49,7 @@ const UploadMeme = () => {
   userId: user.uid,
   userName: user.email ? user.email.split("@")[0] : "Anonymous", // email prefix
   imageBase64: base64Image,
+  author: user.email.split("@")[0],
   caption,
   hashtags,
   likes: 0,

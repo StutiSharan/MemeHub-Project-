@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [memes, setMemes] = useState([]);
   const [editMeme, setEditMeme] = useState(null);
   const [newCaption, setNewCaption] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const db = getDatabase();
@@ -46,7 +46,8 @@ const Dashboard = () => {
     if (!auth.currentUser) return;
     try {
       await remove(dbRef(db, `memes/${auth.currentUser.uid}/${memeId}`));
-      setShowPopup(true); //alert("🗑️ Meme deleted successfully!");
+      setPopupMessage("🗑️ Meme deleted successfully!");
+      setTimeout(() => setPopupMessage(""), 2000);
     } catch (error) {
       console.error("Error deleting meme:", error);
     }
@@ -64,11 +65,9 @@ const Dashboard = () => {
         caption: newCaption,
       });
       setEditMeme(null);
-      setShowPopup(true);
-      setTimeout(() => {
-        setShowPopup(false);
-        navigate("/login");
-      }, 2000);
+      setPopupMessage("✏️ Meme updated successfully!");
+      setTimeout(() => setPopupMessage(""), 2000);
+      // Removed navigate("/login") because redirecting to login after edit seems unintended
     } catch (error) {
       console.error("Error updating meme:", error);
     }
@@ -84,17 +83,13 @@ const Dashboard = () => {
       <p className="text-center text-lg text-gray-700 mb-6">
         🎉 You've uploaded <strong>{memes.length}</strong> memes so far!
       </p>
-      {showPopup && (
+
+      {popupMessage && (
         <div className="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md z-50">
-          🗑️ Meme deleted successfully!
+          {popupMessage}
         </div>
       )}
 
-      {showPopup && (
-        <div className="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md z-50">
-          🗑️ Meme added successfully!
-        </div>
-      )}
       {/* Centered Buttons */}
       <div className="flex justify-center gap-6 mb-10">
         <button

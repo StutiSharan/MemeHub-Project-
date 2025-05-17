@@ -109,7 +109,7 @@ function Feed() {
             firebaseMemes = Object.entries(data).map(([id, post]) => ({
               id,
               title: post.title,
-              url: post.imageBase64,
+              url: post.imageBase64||post.image,
               author:
                 user?.displayName ||
                 user?.email?.split("@")[0] ||
