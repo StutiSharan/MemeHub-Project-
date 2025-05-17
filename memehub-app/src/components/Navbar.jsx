@@ -6,7 +6,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "Feed", path: "/feed" },
-  { name: "Analytics", path: "/analytics" }, // ✅ Analytics now available to all users
+  { name: "Analytics", path: "/login" }, // ✅ Analytics now available to all users
   { name: "Signup", path: "/signup" },
 ];
 

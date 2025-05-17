@@ -26,8 +26,8 @@ const LoginUser = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-100 text-gray-900">
-      <div className="bg-white shadow-lg rounded-lg px-10 py-8 w-full max-w-md bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white">
+   <div className="min-h-[500px] bg-white shadow-lg rounded-lg px-10 py-8 w-full max-w-md bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white flex flex-col justify-center">
+
         <h2 className="text-3xl font-bold text-center mb-6 tracking-wide text-indigo-100">
           User Login Page
         </h2>
@@ -70,7 +70,7 @@ const LoginUser = () => {
           <p className="text-red-500 text-center mt-4 font-medium">{error}</p>
         )}
       </div>
-    </div>
+    
   );
 };
 
