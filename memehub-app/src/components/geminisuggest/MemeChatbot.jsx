@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { GoogleGenAI } from "@google/genai";
 import { Send, X, Minimize2, Maximize2, Loader2, Sparkles } from "lucide-react";
-import ChatMessage from "../geminisuggest/ChatMessage";
+import ChatMessage from "./ChatMessage"; // Adjust path as needed
 
 // ✅ Initialize GenAI
 const genAI = new GoogleGenAI({
