@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
 import { getDatabase, ref, get } from "firebase/database";
-import Loading from "../components/Loader";
 
 const TABS = [
   { key: "new", label: "New", api: null }, // No Reddit API for new tab
