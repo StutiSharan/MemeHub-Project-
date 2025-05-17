@@ -8,11 +8,14 @@ import {
 } from "firebase/database";
 import { auth } from "../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loader";
 
 const Dashboard = () => {
   const [memes, setMemes] = useState([]);
   const [editMeme, setEditMeme] = useState(null);
   const [newCaption, setNewCaption] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const db = getDatabase();
 
@@ -21,6 +24,7 @@ const Dashboard = () => {
     if (!user) return;
 
     const memesRef = dbRef(db, `memes/${user.uid}`);
+    setLoading(true);
     onValue(memesRef, (snapshot) => {
       if (snapshot.exists()) {
         const memeList = Object.entries(snapshot.val()).map(([id, data]) => ({
@@ -31,6 +35,7 @@ const Dashboard = () => {
       } else {
         setMemes([]);
       }
+      setLoading(false);
     });
   }, []);
 
@@ -41,7 +46,7 @@ const Dashboard = () => {
     if (!auth.currentUser) return;
     try {
       await remove(dbRef(db, `memes/${auth.currentUser.uid}/${memeId}`));
-      alert("🗑️ Meme deleted successfully!");
+      setShowPopup(true); //alert("🗑️ Meme deleted successfully!");
     } catch (error) {
       console.error("Error deleting meme:", error);
     }
@@ -59,21 +64,37 @@ const Dashboard = () => {
         caption: newCaption,
       });
       setEditMeme(null);
-      alert("✅ Meme updated successfully!");
+      setShowPopup(true);
+      setTimeout(() => {
+        setShowPopup(false);
+        navigate("/login");
+      }, 2000);
     } catch (error) {
       console.error("Error updating meme:", error);
     }
   };
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-200 p-8">
       <h2 className="text-5xl font-extrabold text-center text-indigo-700 drop-shadow mb-4">
         Welcome to Your Dashboard
       </h2>
       <p className="text-center text-lg text-gray-700 mb-6">
-        🎉 You’ve uploaded <strong>{memes.length}</strong> memes so far!
+        🎉 You've uploaded <strong>{memes.length}</strong> memes so far!
       </p>
+      {showPopup && (
+        <div className="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md z-50">
+          🗑️ Meme deleted successfully!
+        </div>
+      )}
 
+      {showPopup && (
+        <div className="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md z-50">
+          🗑️ Meme added successfully!
+        </div>
+      )}
       {/* Centered Buttons */}
       <div className="flex justify-center gap-6 mb-10">
         <button
