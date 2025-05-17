@@ -31,7 +31,9 @@ const MemeChart = ({ votes }) => {
 
   useEffect(() => {
     voteDataRef.current =
-      voteDataRef.current.length === 20 ? voteDataRef.current : Array(20).fill(votes);
+      voteDataRef.current.length === 20
+        ? voteDataRef.current
+        : Array(20).fill(votes);
 
     setChartData({
       labels: Array.from({ length: 20 }, (_, i) => `T-${19 - i}`),
@@ -110,7 +112,10 @@ const getTotalVotes = (voteEntry) => {
     return voteEntry;
   }
   if (typeof voteEntry === "object" && voteEntry !== null) {
-    return Object.values(voteEntry).reduce((acc, v) => acc + (Number(v) || 0), 0);
+    return Object.values(voteEntry).reduce(
+      (acc, v) => acc + (Number(v) || 0),
+      0
+    );
   }
   return 0;
 };
@@ -118,7 +123,9 @@ const getTotalVotes = (voteEntry) => {
 const Analytics = () => {
   const [memes, setMemes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [votes, setVotes] = useState(() => JSON.parse(localStorage.getItem("memeVotes")) || {});
+  const [votes, setVotes] = useState(
+    () => JSON.parse(localStorage.getItem("memeVotes")) || {}
+  );
 
   const fetchMemes = () => {
     const memesRef = ref(database, "publicMemes");
@@ -158,7 +165,8 @@ const Analytics = () => {
       setMemes((prevMemes) =>
         prevMemes.map((meme) => ({
           ...meme,
-          votes: getTotalVotes(updatedVotes[meme.id]) || Number(meme.votes) || 0,
+          votes:
+            getTotalVotes(updatedVotes[meme.id]) || Number(meme.votes) || 0,
         }))
       );
     };
@@ -170,7 +178,9 @@ const Analytics = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-white">
-        <p className="text-xl font-semibold text-indigo-600">Loading Analytics...</p>
+        <p className="text-xl font-semibold text-indigo-600">
+          Loading Analytics...
+        </p>
       </div>
     );
   }
@@ -191,11 +201,14 @@ const Analytics = () => {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {memes.map((meme) => (
-          <div key={meme.id} className="bg-white shadow-md p-4 rounded-xl border">
+          <div
+            key={meme.id}
+            className="bg-white shadow-md p-4 rounded-xl border"
+          >
             <div className="flex items-center space-x-4 mb-3">
-              {meme.imageBase64||meme.image ? (
+              {meme.imageBase64 ? (
                 <img
-                  src={meme.imageBase64||meme.image}
+                  src={meme.imageBase64}
                   alt="Meme"
                   className="w-20 h-20 rounded-lg object-cover"
                 />
@@ -205,16 +218,24 @@ const Analytics = () => {
                 </div>
               )}
               <div className="flex-1">
-                <h2 className="text-lg font-semibold text-indigo-800">{meme.caption || "Untitled"}</h2>
+                <h2 className="text-lg font-semibold text-indigo-800">
+                  {meme.caption || "Untitled"}
+                </h2>
                 <p className="text-sm text-gray-500">
-                  🕒 {meme.timestamp ? moment(meme.timestamp).fromNow() : "Unknown time"}
+                  🕒{" "}
+                  {meme.timestamp
+                    ? moment(meme.timestamp).fromNow()
+                    : "Unknown time"}
                 </p>
                 <p className="text-sm text-indigo-600 mt-1 font-mono">
-                  {meme.hashtags?.map((tag) => `#${tag}`).join(" ") || "No hashtags"}
+                  {meme.hashtags?.map((tag) => `#${tag}`).join(" ") ||
+                    "No hashtags"}
                 </p>
               </div>
             </div>
-            <p className="font-bold text-green-600 text-lg">🗳 Votes: {meme.votes}</p>
+            <p className="font-bold text-green-600 text-lg">
+              🗳 Votes: {meme.votes}
+            </p>
 
             <MemeChart votes={meme.votes} />
           </div>
