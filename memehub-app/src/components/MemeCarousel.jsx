@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import { useKeenSlider } from 'keen-slider/react';
-import 'keen-slider/keen-slider.min.css';
-import MemeCard from './MemeCard';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useRef, useEffect } from "react";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
+import MemeCard from "./MemeCard";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const MemeCarousel = ({ memes }) => {
   const sliderRef = useRef(null); // Ref for DOM element
