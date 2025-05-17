@@ -22,14 +22,7 @@ const App = () => {
         <main className="flex-grow container mx-auto px-4 py-6">
           <Routes>
             {/* Regular user can Acess these pages */}
-            <Route
-              path="/feed"
-              element={
-                <ProtectedRoute>
-                  <Feed />
-                </ProtectedRoute>
-              }
-            />
+
             <Route
               path="/dashboard"
               element={
@@ -61,7 +54,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-
+            <Route path="/feed" element={<Feed />} />
             <Route path="/upload" element={<UploadMeme />} />
             <Route path="/generate" element={<MemeGenerator />} />
           </Routes>
