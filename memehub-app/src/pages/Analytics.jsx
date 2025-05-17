@@ -206,9 +206,9 @@ const Analytics = () => {
             className="bg-white shadow-md p-4 rounded-xl border"
           >
             <div className="flex items-center space-x-4 mb-3">
-              {meme.imageBase64 ? (
+              {meme.imageBase64||meme.image ? (
                 <img
-                  src={meme.imageBase64}
+                  src={meme.imageBase64||meme.image}
                   alt="Meme"
                   className="w-20 h-20 rounded-lg object-cover"
                 />
