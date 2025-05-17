@@ -18,18 +18,19 @@ const Home = () => {
   return (
     <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">
 
-      {/* 🎉 Marquee Banner */}
-      <div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full overflow-hidden shadow-lg mb-6">
-        <p className="animate-marquee text-sm sm:text-lg flex gap-4 whitespace-nowrap">
-          🥳 Welcome to Meme Madness Central! 🚀 Post memes, earn badges, conquer the leaderboard! 😂🔥💀👑
-        </p>
-      </div>
+    {/* 🎉 Marquee Banner */}
+<div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full overflow-hidden shadow-lg mb-6">
+  <p className="animate-marquee text-sm sm:text-lg flex gap-4 whitespace-nowrap crinkle">
+    🥳 Welcome to Meme Madness Central! 🚀 Post memes, earn badges, conquer the leaderboard! 😂🔥💀👑
+  </p>
+</div>
 
-      {/* 🌀 Logo + Title */}
-      <div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-8 sm:mb-10">
-        <div className="text-4xl sm:text-6xl animate-spin-slow">🤣</div>
-        <h1 className="text-3xl sm:text-6xl font-black tracking-wide text-center">JokeJunction</h1>
-      </div>
+{/* 🌀 Logo + Title */}
+<div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-8 sm:mb-10">
+  <div className="text-4xl sm:text-6xl animate-spin-slow">🤣</div>
+  <h1 className="text-3xl sm:text-6xl font-black tracking-wide text-center pulse-bold">JokeJunction</h1>
+</div>
+
 
       {/* Welcome Section */}
       <div className="text-center space-y-4 sm:space-y-5 bg-gradient-to-r from-pink-700 via-purple-800 to-indigo-700 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl border-2 sm:border-4 border-yellow-300">
@@ -41,11 +42,12 @@ const Home = () => {
           Feel the chaos, ride the hype, and let your funny bone run wild.
         </p>
         <Link
-          to="/feed"
-          className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-yellow-500 hover:to-pink-600 text-indigo-900 px-6 sm:px-8 py-3 sm:py-4 mt-4 rounded-full text-lg sm:text-xl font-extrabold shadow-xl transition-transform duration-300"
-        >
-          Start Meme-ing <ArrowRight size={20} />
-        </Link>
+  to="/feed"
+  className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-yellow-500 hover:to-pink-600 text-indigo-900 px-6 sm:px-8 py-3 sm:py-4 mt-4 rounded-full text-lg sm:text-xl font-extrabold shadow-xl transition-transform duration-300"
+>
+  <span className="crinkle">Start Meme-ing</span> <ArrowRight size={20} />
+</Link>
+
       </div>
 
       {/* Meme of the Day + Carousel */}

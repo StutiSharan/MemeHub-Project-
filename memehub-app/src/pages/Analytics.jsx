@@ -194,8 +194,8 @@ const Analytics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white p-6">
-      <h1 className="text-4xl text-center font-bold text-indigo-700 mb-10">
+   <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">      {/* Tabs */}
+      <h1 className="text-4xl text-center font-bold text-indigo-300 mb-10">
         📊 Meme Analytics Dashboard
       </h1>
 

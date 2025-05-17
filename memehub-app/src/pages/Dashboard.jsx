@@ -88,11 +88,11 @@ const Dashboard = () => {
   return loading ? (
     <Loading />
   ) : (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-200 p-8">
-      <h2 className="text-5xl font-extrabold text-center text-indigo-700 drop-shadow mb-4">
+   <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">      {/* Tabs */}
+      <h2 className="text-5xl font-extrabold text-center text-indigo-200 drop-shadow mb-4">
         Welcome to Your Dashboard
       </h2>
-      <p className="text-center text-lg text-gray-700 mb-6">
+      <p className="text-center text-lg text-white-700 mb-6">
         🎉 You've uploaded <strong>{memes.length}</strong> memes so far!
       </p>
 

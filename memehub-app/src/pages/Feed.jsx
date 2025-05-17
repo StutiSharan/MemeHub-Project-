@@ -40,18 +40,16 @@ const Toast = ({ message, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 3000);
+    }, 3000); // auto dismiss after 3 seconds
     return () => clearTimeout(timer);
   }, [onClose]);
 
   return (
-    <div className="fixed bottom-5 right-5 bg-indigo-600 text-white px-6 py-3 rounded shadow-lg animate-fadeInOut z-[9999] flex items-center gap-3">
-      <span>{message}</span>
-      <button onClick={onClose} className="text-white font-bold">×</button>
+    <div className="fixed bottom-5 right-5 bg-indigo-600 text-white px-6 py-3 rounded shadow-lg animate-fadeInOut z-50">
+      {message}
     </div>
   );
 };
-
 function Feed() {
   const [memes, setMemes] = useState([]);
   const [filteredMemes, setFilteredMemes] = useState([]);
@@ -351,8 +349,7 @@ function Feed() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* Tabs */}
+ <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">      {/* Tabs */}
       <div className="flex flex-wrap gap-3 mb-6 justify-center">
         {TABS.map((t) => (
           <button
@@ -381,18 +378,20 @@ function Feed() {
           }}
           className="flex-grow px-4 py-3 rounded-xl border border-gray-300"
         />
-        <select
-          value={activeTag || ""}
-          onChange={(e) => setActiveTag(e.target.value || null)}
-          className="px-4 py-3 rounded-xl border border-gray-300"
-        >
-          <option value="">All Tags</option>
-          {allTags.map((tag) => (
-            <option key={tag} value={tag}>
-              #{tag}
-            </option>
-          ))}
-        </select>
+       <select
+  value={activeTag || ""}
+  onChange={(e) => setActiveTag(e.target.value || null)}
+  className="px-4 py-3 rounded-xl border border-gray-300 bg-indigo-500 text-white"
+>
+  <option value="" className="text-white">
+    All Tags
+  </option>
+  {allTags.map((tag) => (
+    <option key={tag} value={tag} className="text-white">
+      #{tag}
+    </option>
+  ))}
+</select>
         {activeTag && (
           <button
             onClick={() => setActiveTag(null)}
@@ -422,12 +421,7 @@ function Feed() {
           />
         ))}
       </div>
- {toastMessage && (
-        <Toast
-          message={toastMessage}
-          onClose={() => setToastMessage(null)}
-        />
-      )}
+
       {page * ITEMS_PER_PAGE < filteredMemes.length && (
         <div className="flex justify-center mt-8">
           <button
@@ -601,30 +595,35 @@ const MemeCard = ({
                   setCommentText("");
                 }}
                 className="flex gap-2 mt-2">
+ <div className="flex flex-col sm:flex-row gap-2 mt-2">
   <input
-    type="text"
-    placeholder="Add a comment..."
-    value={commentText}
-    onChange={(e) => setCommentText(e.target.value)}
-    className="flex-grow px-3 py-1 rounded border border-gray-300"
-    onKeyDown={(e) => {
-      if (e.key === "Enter") {
-        onAddComment(meme.id, commentText);
+  type="text"
+  placeholder="Add a comment..."
+  value={commentText}
+  onChange={(e) => setCommentText(e.target.value)}
+  className="w-40 sm:flex-grow px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && commentText.trim()) {
+      onAddComment(meme.id, commentText.trim());
+      setCommentText("");
+    }
+  }}
+  disabled={!user}
+/>
+  <button
+    onClick={() => {
+      if (commentText.trim()) {
+        onAddComment(meme.id, commentText.trim());
         setCommentText("");
       }
     }}
-    disabled={!user}
-  />
-  <button
-    onClick={() => {
-      onAddComment(meme.id, commentText);
-      setCommentText("");
-    }}
     disabled={!user || !commentText.trim()}
-    className="px-3 py-1 bg-indigo-600 text-white rounded disabled:opacity-50"
+    className="px-3 py-2 bg-indigo-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition"
   >
     Post
   </button>
+</div>
+
               </form>
             ) : (
               <p className="text-sm text-gray-500">Login to comment</p>
