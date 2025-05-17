@@ -106,19 +106,27 @@ function Feed() {
           const snapshot = await get(ref(db, "publicMemes"));
           if (snapshot.exists()) {
             const data = snapshot.val();
-            firebaseMemes = Object.entries(data).map(([id, post]) => ({
-              id,
-              title: post.title,
-              url: post.imageBase64||post.image,
-              author:
-                user?.displayName ||
-                user?.email?.split("@")[0] ||
-                "anonymous",
-              ups: post.ups || 0,
-              created_utc: post.timestamp || Date.now(),
-              hashtags: post.tags || ["funny"],
-              source: "firebase",
-            }));
+          firebaseMemes = Object.entries(data).map(([id, post]) => {
+  let author = "anonymous";
+  if (typeof post.author === "string") {
+    author = post.author;
+  } else if (typeof post.author === "object" && post.author.email) {
+    author = post.author.email.split("@")[0];
+  }
+
+  return {
+    id,
+    title: post.title,
+    url: post.imageBase64 || post.image,
+    author,
+    ups: post.ups || 0,
+    created_utc: post.timestamp || Date.now(),
+    hashtags: post.tags || ["funny"],
+    source: "firebase",
+  };
+});
+
+
           }
         }
 
