@@ -6,7 +6,7 @@
 
 ## 📌 Overview
 
-MemeHub combines AI assistance, meme generation tools, social engagement, and performance tracking into a seamless meme-sharing experience. It’s a platform for both casual meme lovers and content creators to shine.
+JokeJunction combines AI assistance, meme generation tools, social engagement, and performance tracking into a seamless meme-sharing experience. It’s a platform for both casual meme lovers and content creators to shine.
 
 ---
 
@@ -94,8 +94,8 @@ Users preferring manual entry can upload and caption memes without AI help.
 - **Frontend**: React.js
 - **Backend**: Firebase (Auth & Realtime Database)
 - **Styling**: Tailwind CSS
-- **AI Integration**: Chatbot for caption suggestions
-- **Deployment**: Vercel or Firebase Hosting
+- **AI Integration**: Gemini Chatbot for caption suggestions
+- **Deployment**: Netlify
 
 ---
 
@@ -103,22 +103,21 @@ Users preferring manual entry can upload and caption memes without AI help.
 
 ### 1. Clone the Repository
 
-```bash
-git clone https://github.com/your-username/memehub.git
-cd memehub
-2. Install Dependencies
-bash
-npm install
-3. Set Environment Variables
-Create a .env file and add:
-
-REACT_APP_API_KEY=your_key
-REACT_APP_AUTH_DOMAIN=your_project.firebaseapp.com
-REACT_APP_DATABASE_URL=https://your_project.firebaseio.com
-REACT_APP_PROJECT_ID=your_project
-REACT_APP_STORAGE_BUCKET=your_project.appspot.com
-REACT_APP_MESSAGING_SENDER_ID=your_id
-REACT_APP_APP_ID=your_app_id
+    ```bash
+    git clone https://github.com/your-username/memehub.git
+    cd MemeHub-Project-
+    2. Install Dependencies
+    bash
+    npm install
+    3. Set Environment Variables
+    Create a .env file and add:
+      apiKey: "AIzaSyDRCGFXgTsPaJhlNp7mFwDENBLZRFlb9Ik",
+      authDomain: "memehub-c5222.firebaseapp.com",
+      projectId: "memehub-c5222",
+      storageBucket: "memehub-c5222.firebasestorage.app",
+      messagingSenderId: "529198069257",
+      appId: "1:529198069257:web:876c0d839639d078056ad8",
+      measurementId: "G-ZBN7V3NE0M",
 📂 memehub-app/
 │
 ├── images/                # Stores meme-related images and assets
@@ -148,9 +147,9 @@ REACT_APP_APP_ID=your_app_id
 ├── vite.config.js         # Vite configuration
 
 🙌 Contributors
-Anjali Sharma
+Anjali Sharma(Team Member)
+Stuti Sharan(Team Lead)
 
-Stuti Sharan
 
 Contributors welcome!
 ```
