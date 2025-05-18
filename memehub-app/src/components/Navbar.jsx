@@ -40,6 +40,7 @@ const Navbar = () => {
     ? [
         { name: "Home", path: "/" },
         { name: "Feed", path: "/feed" },
+        { name: "LeaderBoard", path: "/leaderBoard" },
         ...(user.email === adminEmail
           ? [{ name: "Analytics", path: "/analytics" }]
           : []),
@@ -47,6 +48,7 @@ const Navbar = () => {
     : [
         { name: "Home", path: "/" },
         { name: "Feed", path: "/feed" },
+        { name: "LeaderBoard", path: "/leaderBoard" },
         { name: "Signup", path: "/signup" },
       ];
 
