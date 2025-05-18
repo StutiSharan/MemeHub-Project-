@@ -25,7 +25,7 @@ const MemeCarousel = ({ memes }) => {
     const startAutoPlay = () => {
       timerRef.current = setInterval(() => {
         sliderInstanceRef.current?.next();
-      }, 2000);
+      }, 3000);
     };
 
     startAutoPlay();
@@ -52,7 +52,7 @@ const MemeCarousel = ({ memes }) => {
       {/* Prev Button */}
       <button
         onClick={() => sliderInstanceRef.current?.prev()}
-        className="absolute top-1/2 left-0 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md z-10"
+        className="absolute top-1/2 left-0 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md z-10 ml-2"
       >
         <ChevronLeft size={20} />
       </button>
@@ -60,7 +60,7 @@ const MemeCarousel = ({ memes }) => {
       {/* Next Button */}
       <button
         onClick={() => sliderInstanceRef.current?.next()}
-        className="absolute top-1/2 right-0 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md z-10"
+        className="absolute top-1/2 right-0 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md z-10 mr-2"
       >
         <ChevronRight size={20} />
       </button>
