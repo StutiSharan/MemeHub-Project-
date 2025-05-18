@@ -8,7 +8,7 @@ MemeHub is a next-gen meme-sharing platform where users can generate memes, enga
 
 The homepage provides general information about MemeHub, showcasing trending memes and engagement statistics.
 
-![Homepage Recording](codepower\MemeHub-Project--2\memehub-app\images\Screen Recording 2025-05-18 124337.mp4)
+![Homepage Recording](codepower/MemeHub-Project--2/memehub-app/images/Screen Recording 2025-05-18 124337.mp4)
 
 ### Signup & Login
 
