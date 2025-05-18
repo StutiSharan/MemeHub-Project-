@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+import React from 'react';
+import MemeCard from '../components/MemeCard';
+import memes from '../utils/sampleMemes';
+import MemeCarousel from '../components/MemeCarousel';
+import { Link } from 'react-router-dom';
+import { FaFireAlt, FaCrown, FaRocket } from 'react-icons/fa';
+import { ArrowRight } from 'lucide-react';
+import { getAuth } from 'firebase/auth';
+import { FiBell } from "react-icons/fi";
+import clsx from 'clsx'
+import { useState,useEffect } from 'react';
+=======
 import React from "react";
 import MemeCard from "../components/MemeCard";
 import memes from "../utils/sampleMemes";
@@ -7,6 +20,7 @@ import { FaFireAlt, FaCrown, FaRocket } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
 import { getAuth } from "firebase/auth";
 
+>>>>>>> 974455912b6a91941b9ed895ba944a0c4889ee44
 const Home = () => {
   const auth = getAuth();
   const user = auth.currentUser;
@@ -15,6 +29,54 @@ const Home = () => {
   const topMemes = memes.slice(1, 6);
   const redirectLink = user ? "/feed" : "/signup";
 
+<<<<<<< HEAD
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
+
+  return (
+     <div
+      className={clsx(
+        "space-y-10 px-4 sm:px-6 lg:px-16 py-6 min-h-screen text-white select-none transition-all duration-500",
+        darkMode
+          ? "bg-black"
+          : "bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900"
+      )}
+    >
+    {/* 🎉 Marquee Banner */}
+<div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full text-center overflow-hidden shadow-lg mb-6">
+  <p className="animate-marquee text-sm sm:text-lg flex gap-4  text-center whitespace-nowrap crinkle">
+    🥳 Welcome to Meme Madness Central! 🚀 Post memes, earn badges, conquer the leaderboard! 😂🔥💀👑
+  </p>
+</div>
+
+{/* 🌀 Logo + Title */}
+<div className="flex justify-center items-center space-x-4 relative mb-8 sm:mb-10">
+        <div className="text-4xl sm:text-6xl animate-spin-slow">🤣</div>
+        <h1 className="text-3xl sm:text-6xl font-black tracking-wide text-center pulse-bold">JokeJunction</h1>
+
+        {/* Bell Icon - Swinging and Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="absolute right-2 sm:right-8 top-1 sm:top-2 transform origin-top-center animate-swing"
+        >
+          <FiBell className="text-yellow-400 hover:scale-110 transition-transform" size={36} />
+        </button>
+      </div>
+
+
+=======
   return (
     <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">
       {/* 🎉 Marquee Banner */}
@@ -32,6 +94,7 @@ const Home = () => {
           JokeJunction
         </h1>
       </div>
+>>>>>>> 974455912b6a91941b9ed895ba944a0c4889ee44
 
       {/* Welcome Section */}
       <div className="text-center space-y-4 sm:space-y-5 bg-gradient-to-r from-pink-700 via-purple-800 to-indigo-700 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl border-2 sm:border-4 border-yellow-300">

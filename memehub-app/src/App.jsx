@@ -14,6 +14,7 @@ import MemeGenerator from "./pages/MemeGenerator";
 import AdminDashboard from "./AdminPage/AdminCredentials";
 import LeaderBoardPag from "./components/LeaderBoardPag";
 
+
 const App = () => {
   return (
     <Router>
