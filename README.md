@@ -1,90 +1,105 @@
-## Overview
+# Joke Junction 😂🔥
 
-MemeHub is a next-gen meme-sharing platform where users can generate memes, engage with a community, and track their meme's rise to viral fame.
-
-## Pages & Features
-
-### Homepage
-
-The homepage provides general information about MemeHub, showcasing trending memes and engagement statistics.
-
-![Homepage Recording](codepower/MemeHub-Project--2/memehub-app/images/Screen Recording 2025-05-18 124337.mp4)
-
-### Signup & Login
-
-Allows users and admins to register and access interactive features.
-
-![Signup Screenshot](MemeHub-Project--2\memehub-app\images\login.png)
-![Login Screenshot](MemeHub-Project--2\memehub-app\images\login.png)
-
-### Meme Creation Studio
-
-Users can generate memes using predefined templates or upload their own images. AI chatbot assists in caption suggestions.
-
-![Meme Creation Screenshot](<(MemeHub-Project--2\memehub-app\images\generatePage.png)>)
-![AI Chatbot Screenshot](<(MemeHub-Project--2\memehub-app\images\chatbot.png)>)
-
-### Voting, Commenting & Tagging
-
-Users can upvote/downvote memes, comment, and tag memes with relevant categories.
-
-![Voting & Commenting Screenshot](images/voting_commenting.png)
-
-### Meme Feed & Search
-
-Includes tabs for new, trending, and all-time top memes. Users can search by hashtags or caption content.
-
-![Meme Feed Screenshot](images/meme_feed.png)
-
-### Meme Performance Analytics (Admin Only)
-
-Tracks meme engagement metrics such as views, votes, and trends.
-
-![Analytics Screenshot](images/analytics.png)
-
-### Leaderboard
-
-Ranks users based on meme popularity and engagement metrics.
-
-![Leaderboard Screenshot](images/leaderboard.png)
-
-### Admin Dashboard
-
-Admins can manage meme templates, moderate reports, and access detailed analytics.
-
-![Admin Dashboard Screenshot](images/admin_dashboard.png)
-
-### Manual Meme Posting
-
-Users who prefer non-AI-generated memes can upload and format them manually.
-
-![Manual Meme Upload Screenshot](images/manual_meme_upload.png)
+**Joke Junction 😂🔥** is a next-gen meme-sharing platform where users can generate, upload, and share memes, engage with a vibrant community, and track their memes as they rise to viral fame.
 
 ---
 
-### How to Add Screenshots
+## 📌 Overview
 
-Place all images inside an `images/` folder in your project directory and reference them using Markdown syntax:
+MemeHub combines AI assistance, meme generation tools, social engagement, and performance tracking into a seamless meme-sharing experience. It’s a platform for both casual meme lovers and content creators to shine.
 
-````markdown
-![Example Screenshot](images/example.png)
+---
+
+## 📸 Screenshots & Features
+
+### 🏠 Homepage
+
+The homepage displays trending memes, basic platform insights, and recent user activity.
+
+![Homepage Recording](MemeHub-Project--2/memehub-app/images/Screen%20Recording%202025-05-18%20124337.mp4)
+
+---
+
+### 🔐 Signup & Login
+
+Users can register or login to access the platform’s features.
+
+![Signup Screenshot](MemeHub-Project--2/memehub-app/images/login.png)
+
+---
+
+### 🧠 Meme Creation Studio
+
+Create memes using preloaded templates or by uploading your own images. Includes AI chatbot for caption generation.
+
+![Meme Creation Screenshot](MemeHub-Project--2/memehub-app/images/generatePage.png)
+![AI Chatbot Screenshot](MemeHub-Project--2/memehub-app/images/chatbot.png)
+
+---
+
+### 👍 Voting, 💬 Commenting & 🏷️ Tagging
+
+Users can upvote/downvote, comment, and categorize memes.
+
+![Voting & Commenting Screenshot](MemeHub-Project--2/memehub-app/images/voting_commenting.png)
+
+---
+
+### 📰 Meme Feed & Search
+
+Filter memes by trending, latest, or top all-time. Search by hashtags or caption text.
+
+![Meme Feed Screenshot](MemeHub-Project--2/memehub-app/images/meme_feed.png)
+
+---
+
+### 📊 Meme Performance Analytics (Admin Only)
+
+Admins can view metrics like views, upvotes, and viral trends.
+
+![Analytics Screenshot](MemeHub-Project--2/memehub-app/images/analytics.png)
+
+---
+
+### 🏆 Leaderboard
+
+Track top users based on engagement, uploads, and votes.
+
+![Leaderboard Screenshot](MemeHub-Project--2/memehub-app/images/leaderboard.png)
+
+---
+
+### 🛠️ Admin Dashboard
+
+Admins manage templates, view reports, and monitor platform-wide stats.
+
+![Admin Dashboard Screenshot](MemeHub-Project--2/memehub-app/images/admin_dashboard.png)
+
+---
+
+### 📥 Manual Meme Upload
+
+Users preferring manual entry can upload and caption memes without AI help.
+
+![Manual Meme Upload Screenshot](MemeHub-Project--2/memehub-app/images/manual_meme_upload.png)
+
+---
 
 ## 🚀 Tech Stack
 
-- **React.js** (frontend UI)
-- **Firebase** (real-time database & authentication)
-- **Tailwind CSS** (responsive styling)
-- **AI Integration** (Meme suggestions & auto-captions)
+- **Frontend**: React.js
+- **Backend**: Firebase (Auth & Realtime Database)
+- **Styling**: Tailwind CSS
+- **AI Integration**: Chatbot for caption suggestions
+- **Deployment**: Vercel or Firebase Hosting
 
-### 🌐 Deployment
+---
 
-- Hosted on **Vercel** or **Firebase Hosting**.
+## 🧑‍💻 Getting Started
 
-## ⚡ Getting Started
+### 1. Clone the Repository
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-repo/meme-junction.git
-   cd meme-junction
-   ```
-````
+```bash
+git clone https://github.com/your-username/memehub.git
+cd memehub
+```
