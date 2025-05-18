@@ -57,7 +57,7 @@ function Feed() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [activeTag, setActiveTag] = useState(null);
-   const [selectedMeme, setSelectedMeme] = useState(null);
+  const [selectedMeme, setSelectedMeme] = useState(null);
   const [votes, setVotes] = useState(
     () => JSON.parse(localStorage.getItem("memeVotes")) || {}
   );
@@ -67,7 +67,7 @@ function Feed() {
   const [allTags, setAllTags] = useState([]);
   const [user, setUser] = useState(null);
 
-   const [toastMessage, setToastMessage] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
 
   // Function to show toast messages
   const showToast = (msg) => {
@@ -91,7 +91,10 @@ function Feed() {
         const response = await fetch(selectedMeme.url);
         const blob = await response.blob();
 
-        const fileExtension = selectedMeme.url.split(".").pop().split(/\#|\?/)[0];
+        const fileExtension = selectedMeme.url
+          .split(".")
+          .pop()
+          .split(/\#|\?/)[0];
         const fileName = `${selectedMeme.id || "meme"}.${fileExtension}`;
         const file = new File([blob], fileName, { type: blob.type });
 
@@ -123,7 +126,6 @@ function Feed() {
       console.error(error);
     }
   };
-
 
   // Track logged-in user
   useEffect(() => {
@@ -179,27 +181,25 @@ function Feed() {
           const snapshot = await get(ref(db, "publicMemes"));
           if (snapshot.exists()) {
             const data = snapshot.val();
-          firebaseMemes = Object.entries(data).map(([id, post]) => {
-  let author = "anonymous";
-  if (typeof post.author === "string") {
-    author = post.author;
-  } else if (typeof post.author === "object" && post.author.email) {
-    author = post.author.email.split("@")[0];
-  }
+            firebaseMemes = Object.entries(data).map(([id, post]) => {
+              let author = "anonymous";
+              if (typeof post.author === "string") {
+                author = post.author;
+              } else if (typeof post.author === "object" && post.author.email) {
+                author = post.author.email.split("@")[0];
+              }
 
-  return {
-    id,
-    title: post.title,
-    url: post.imageBase64 || post.image,
-    author,
-    ups: post.ups || 0,
-    created_utc: post.timestamp || Date.now(),
-    hashtags: post.tags || ["funny"],
-    source: "firebase",
-  };
-});
-
-
+              return {
+                id,
+                title: post.title,
+                url: post.imageBase64 || post.image,
+                author,
+                ups: post.ups || 0,
+                created_utc: post.timestamp || Date.now(),
+                hashtags: post.tags || ["funny"],
+                source: "firebase",
+              };
+            });
           }
         }
 
@@ -349,7 +349,9 @@ function Feed() {
   };
 
   return (
- <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">      {/* Tabs */}
+    <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">
+      {" "}
+      {/* Tabs */}
       <div className="flex flex-wrap gap-3 mb-6 justify-center">
         {TABS.map((t) => (
           <button
@@ -365,7 +367,6 @@ function Feed() {
           </button>
         ))}
       </div>
-
       {/* Search + Filter */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 max-w-md mx-auto">
         <input
@@ -378,20 +379,20 @@ function Feed() {
           }}
           className="flex-grow px-4 py-3 rounded-xl border border-gray-300"
         />
-       <select
-  value={activeTag || ""}
-  onChange={(e) => setActiveTag(e.target.value || null)}
-  className="px-4 py-3 rounded-xl border border-gray-300 bg-indigo-500 text-white"
->
-  <option value="" className="text-white">
-    All Tags
-  </option>
-  {allTags.map((tag) => (
-    <option key={tag} value={tag} className="text-white">
-      #{tag}
-    </option>
-  ))}
-</select>
+        <select
+          value={activeTag || ""}
+          onChange={(e) => setActiveTag(e.target.value || null)}
+          className="px-4 py-3 rounded-xl border border-gray-300 bg-indigo-500 text-white"
+        >
+          <option value="" className="text-white">
+            All Tags
+          </option>
+          {allTags.map((tag) => (
+            <option key={tag} value={tag} className="text-white">
+              #{tag}
+            </option>
+          ))}
+        </select>
         {activeTag && (
           <button
             onClick={() => setActiveTag(null)}
@@ -401,7 +402,6 @@ function Feed() {
           </button>
         )}
       </div>
-
       {/* Meme Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
         {filteredMemes.slice(0, page * ITEMS_PER_PAGE).map((meme) => (
@@ -421,7 +421,6 @@ function Feed() {
           />
         ))}
       </div>
-
       {page * ITEMS_PER_PAGE < filteredMemes.length && (
         <div className="flex justify-center mt-8">
           <button
@@ -494,12 +493,12 @@ const MemeCard = ({
   return (
     <div className="bg-white p-5 rounded-xl shadow-lg flex flex-col">
       <img
-  src={meme.url}
-  alt={meme.title}
-  className="w-full object-cover aspect-[4/3] cursor-pointer"  // add cursor-pointer for UX
-  loading="lazy"
-  onClick={onClickImage}  // add this!
-/>
+        src={meme.url}
+        alt={meme.title}
+        className="w-full object-cover aspect-[4/3] cursor-pointer" // add cursor-pointer for UX
+        loading="lazy"
+        onClick={onClickImage} // add this!
+      />
       <div className="p-4 flex-grow flex flex-col">
         <div className="mb-1 flex items-center gap-2">
           <h3 className="font-bold text-lg text-indigo-700">{meme.title}</h3>
@@ -567,26 +566,28 @@ const MemeCard = ({
 
         {showComments && (
           <div className="flex flex-col gap-2">
-          {comments.map((c, i) => (
-  <div
-    key={i}
-    className="flex justify-between items-center bg-gray-100 rounded p-2"
-  >
-    <div>
-      <span className="font-semibold">{c.displayName || "Anon"}</span>:{" "}
-      <span>{c.text}</span>
-    </div>
-    {user && user.uid === c.uid && (
-      <button
-        onClick={() => onDeleteComment(meme.id, i)}
-        className="text-red-600 hover:text-red-800 font-bold"
-        title="Delete comment"
-      >
-        &times;
-      </button>
-    )}
-  </div>
-))}
+            {comments.map((c, i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center bg-gray-100 rounded p-2"
+              >
+                <div>
+                  <span className="font-semibold">
+                    {c.displayName || "Anon"}
+                  </span>
+                  : <span>{c.text}</span>
+                </div>
+                {user && user.uid === c.uid && (
+                  <button
+                    onClick={() => onDeleteComment(meme.id, i)}
+                    className="text-red-600 hover:text-red-800 font-bold"
+                    title="Delete comment"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+            ))}
             {user ? (
               <form
                 onSubmit={(e) => {
@@ -594,36 +595,36 @@ const MemeCard = ({
                   onAddComment(meme.id, commentText);
                   setCommentText("");
                 }}
-                className="flex gap-2 mt-2">
- <div className="flex flex-col sm:flex-row gap-2 mt-2">
-  <input
-  type="text"
-  placeholder="Add a comment..."
-  value={commentText}
-  onChange={(e) => setCommentText(e.target.value)}
-  className="w-40 sm:flex-grow px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-  onKeyDown={(e) => {
-    if (e.key === "Enter" && commentText.trim()) {
-      onAddComment(meme.id, commentText.trim());
-      setCommentText("");
-    }
-  }}
-  disabled={!user}
-/>
-  <button
-    onClick={() => {
-      if (commentText.trim()) {
-        onAddComment(meme.id, commentText.trim());
-        setCommentText("");
-      }
-    }}
-    disabled={!user || !commentText.trim()}
-    className="px-3 py-2 bg-indigo-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition"
-  >
-    Post
-  </button>
-</div>
-
+                className="flex gap-2 mt-2"
+              >
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                  <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    className="w-40 sm:flex-grow px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && commentText.trim()) {
+                        onAddComment(meme.id, commentText.trim());
+                        setCommentText("");
+                      }
+                    }}
+                    disabled={!user}
+                  />
+                  <button
+                    onClick={() => {
+                      if (commentText.trim()) {
+                        onAddComment(meme.id, commentText.trim());
+                        setCommentText("");
+                      }
+                    }}
+                    disabled={!user || !commentText.trim()}
+                    className="px-3 py-2 bg-indigo-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition"
+                  >
+                    Post
+                  </button>
+                </div>
               </form>
             ) : (
               <p className="text-sm text-gray-500">Login to comment</p>
