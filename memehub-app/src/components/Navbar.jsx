@@ -3,12 +3,16 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-const navLinks = [
-  { name: "Home", path: "/" },
-  { name: "Feed", path: "/feed" },
-  { name: "Analytics", path: "/login" }, // ✅ Analytics now available to all users
-  { name: "Signup", path: "/signup" },
-];
+// const navLinks = user
+//   ? [
+//       { name: "Home", path: "/" },
+//       { name: "Feed", path: "/feed" },
+//       { name: "Dashboard", path: "/dashboard" },
+//     ]
+//   : [
+//       { name: "Analytics", path: "/login" }, // ✅ Analytics now available to all users
+//       { name: "Signup", path: "/signup" },
+//     ];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,6 +29,31 @@ const Navbar = () => {
       // ✅ If user has a profile picture, use it. Otherwise, store a generated avatar once.
       if (authUser) {
         setUserAvatar(authUser.photoURL || generateRandomAvatar(authUser.uid));
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const navLinks = user
+    ? [
+        { name: "Home", path: "/" },
+        { name: "Feed", path: "/feed" },
+      ]
+    : [
+        { name: "Analytics", path: "/login" }, // ✅ Analytics now available to all users
+        { name: "Signup", path: "/signup" },
+      ];
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        setUser(authUser);
+
+        // ✅ Hardcoded Admin Email Check
+        const adminEmail = "anjali@gmail.com"; // Replace with actual admin email
+        if (authUser.email === adminEmail) {
+          navigate("/analytics"); // ✅ Redirect Admin to Analytics Page
+        }
       }
     });
 
@@ -73,12 +102,25 @@ const Navbar = () => {
                     ? "border-b-4 border-pink-400 text-pink-300 transition duration-300"
                     : "hover:text-pink-300 hover:border-b-4 hover:border-pink-400 transition duration-300"
                 }
+                onClick={() => setMenuOpen(false)}
               >
                 {name}
               </NavLink>
             </li>
           ))}
-          {user && <NavLink to="/dashboard">Dashboard</NavLink>}
+          {user && (
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                isActive
+                  ? "border-b-4 border-pink-400 text-pink-300 transition duration-300"
+                  : "hover:text-pink-300 hover:border-b-4 hover:border-pink-400 transition duration-300"
+              }
+              onClick={() => setMenuOpen(false)}
+            >
+              Dashboard
+            </NavLink>
+          )}
         </ul>
         {/* User Info & Logout Button */}
         {user ? (
