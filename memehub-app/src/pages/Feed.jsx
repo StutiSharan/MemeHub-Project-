@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
-import { getDatabase, ref, get } from "firebase/database";
+import { getDatabase, ref, get, onValue } from "firebase/database";
 
 const TABS = [
   {
@@ -69,6 +69,17 @@ function Feed() {
 
   const [toastMessage, setToastMessage] = useState(null);
 
+  const [reactions, setReactions] = useState({});
+
+  useEffect(() => {
+    const db = getDatabase();
+    const reactionRef = ref(db, "reactions");
+
+    // ✅ Fetch reactions from Firebase in real-time
+    onValue(reactionRef, (snapshot) => {
+      setReactions(snapshot.val() || {}); // Ensure data exists
+    });
+  }, []);
   // Function to show toast messages
   const showToast = (msg) => {
     setToastMessage(msg);
