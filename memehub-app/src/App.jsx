@@ -13,6 +13,7 @@ import UploadMeme from "./components/UploadMems";
 import MemeGenerator from "./pages/MemeGenerator";
 import AdminDashboard from "./AdminPage/AdminCredentials";
 
+
 const App = () => {
   return (
     <Router>

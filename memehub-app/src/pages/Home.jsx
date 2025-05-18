@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import { FaFireAlt, FaCrown, FaRocket } from 'react-icons/fa';
 import { ArrowRight } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
-
+import { FiBell } from "react-icons/fi";
+import clsx from 'clsx'
+import { useState,useEffect } from 'react';
 const Home = () => {
   const auth = getAuth();
   const user = auth.currentUser;
@@ -15,9 +17,30 @@ const Home = () => {
   const topMemes = memes.slice(1, 6);
   const redirectLink = user ? '/feed' : '/signup';
 
-  return (
-    <div className="space-y-10 px-4 sm:px-6 lg:px-16 py-6 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 min-h-screen text-white select-none">
 
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
+
+  return (
+     <div
+      className={clsx(
+        "space-y-10 px-4 sm:px-6 lg:px-16 py-6 min-h-screen text-white select-none transition-all duration-500",
+        darkMode
+          ? "bg-black"
+          : "bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900"
+      )}
+    >
     {/* 🎉 Marquee Banner */}
 <div className="bg-yellow-400 text-black font-extrabold py-2 rounded-full text-center overflow-hidden shadow-lg mb-6">
   <p className="animate-marquee text-sm sm:text-lg flex gap-4  text-center whitespace-nowrap crinkle">
@@ -26,10 +49,19 @@ const Home = () => {
 </div>
 
 {/* 🌀 Logo + Title */}
-<div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-8 sm:mb-10">
-  <div className="text-4xl sm:text-6xl animate-spin-slow">🤣</div>
-  <h1 className="text-3xl sm:text-6xl font-black tracking-wide text-center pulse-bold">JokeJunction</h1>
-</div>
+<div className="flex justify-center items-center space-x-4 relative mb-8 sm:mb-10">
+        <div className="text-4xl sm:text-6xl animate-spin-slow">🤣</div>
+        <h1 className="text-3xl sm:text-6xl font-black tracking-wide text-center pulse-bold">JokeJunction</h1>
+
+        {/* Bell Icon - Swinging and Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="absolute right-2 sm:right-8 top-1 sm:top-2 transform origin-top-center animate-swing"
+        >
+          <FiBell className="text-yellow-400 hover:scale-110 transition-transform" size={36} />
+        </button>
+      </div>
+
 
 
       {/* Welcome Section */}
