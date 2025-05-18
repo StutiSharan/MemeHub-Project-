@@ -31,7 +31,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
         {
           text: `Hi ${
             userDetails.name || "Guest"
-          }! I'm your AI assistant powered by Masai. How can I help you today?`,
+          }! I'm your AI assistant powered by JokeJunction😄. How can I help you today?`,
           isBot: true,
         },
       ]);
