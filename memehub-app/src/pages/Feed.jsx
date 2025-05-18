@@ -253,6 +253,23 @@ function Feed() {
     localStorage.setItem("memeComments", JSON.stringify(comments));
   }, [comments]);
 
+  // reactions shape: { memeId: { emoji: count } }
+  const getReactionsForMeme = (memeId) => reactions[memeId] || {};
+
+  const handleReact = (memeId, emoji) => {
+    setReactions((prev) => {
+      const memeReactions = prev[memeId] || {};
+      const currentCount = memeReactions[emoji] || 0;
+      return {
+        ...prev,
+        [memeId]: {
+          ...memeReactions,
+          [emoji]: currentCount + 1,
+        },
+      };
+    });
+  };
+
   // votes shape: { memeId: { userId: 1 or -1 } }
   // Calculate total vote count for a meme
   const getTotalVotes = (memeId) => {
@@ -417,7 +434,9 @@ function Feed() {
             onTagClick={onTagClick}
             activeTag={activeTag}
             user={user}
-            onClickImage={() => openMemeModal(meme)} // Pass click handler here
+            onClickImage={() => openMemeModal(meme)}
+            reactions={getReactionsForMeme(meme.id) || {}}
+            onReact={handleReact} // Pass click handler here
           />
         ))}
       </div>
@@ -480,11 +499,13 @@ const MemeCard = ({
   userVote,
   onVote,
   comments,
+  onReact,
   onAddComment,
   onDeleteComment,
   onTagClick,
   onClickImage,
   activeTag,
+  reactions,
   user,
 }) => {
   const [commentText, setCommentText] = useState("");
@@ -555,7 +576,22 @@ const MemeCard = ({
           </button>
           <span className="font-semibold">Total Votes: {totalVotes}</span>
         </div>
-
+        <div className="flex flex-wrap items-center gap-3 mt-2">
+          {["😂", "❤️", "😮", "🔥"].map((emoji) => (
+            <button
+              key={emoji}
+              onClick={() => onReact(meme.id, emoji)}
+              className="flex items-center gap-1 text-xl sm:text-l cursor-pointer select-none"
+              title={`React with ${emoji}`}
+              type="button"
+            >
+              <span>{emoji}</span>
+              <span className="text-indigo-700 font-semibold select-none min-w-[18px] text-center">
+                {reactions[emoji] > 0 ? reactions[emoji] : ""}
+              </span>
+            </button>
+          ))}
+        </div>
         {/* Comments */}
         <button
           onClick={() => setShowComments((show) => !show)}
