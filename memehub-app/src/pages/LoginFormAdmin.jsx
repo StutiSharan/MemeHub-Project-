@@ -93,11 +93,16 @@ const LoginAdmin = () => {
             Login as Admin
           </button>
           {/* Success Popup */}
-          {showMessage && (
-            <div className="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md z-50">
-              ✅ Login Successful! Redirecting... Welcome {email}
-            </div>
-          )}
+         {showMessage && (
+  <div className={`fixed top-2 left-1/2 transform -translate-x-1/2 ${
+    email === adminEmail ? "bg-green-500" : "bg-red-500"
+  } text-white px-4 py-2 rounded-lg shadow-md z-50`}>
+    {email === adminEmail
+      ? `✅ Login Successful! Redirecting... Welcome ${email}`
+      : "⛔ You are not an admin!"}
+  </div>
+)}
+
         </form>
         {error && (
           <p className="text-red-500 text-center mt-4 font-medium">{error}</p>

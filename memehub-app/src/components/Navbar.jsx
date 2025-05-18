@@ -69,9 +69,9 @@ const Navbar = () => {
   }, []);
 
   // ✅ Generate random avatar if the user has no profile image
-  const generateRandomAvatar = () => {
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=6`;
-  };
+ const generateRandomAvatar = (seed) => {
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+};
 
   // ✅ Logout function
   const handleLogout = async () => {
@@ -136,13 +136,13 @@ const Navbar = () => {
             {/* User Avatar & Name */}
             <div className="flex items-center space-x-2">
               <img
-                src={user.photoURL || generateRandomAvatar()} // Fallback avatar
-                alt="User Avatar"
-                className="w-10 h-10 rounded-full border border-white"
-              />
-              <span className="font-semibold">
-                {user.displayName || "Admin"}
-              </span>
+  src={user.photoURL || generateRandomAvatar(user.uid || user.email)}
+  alt="User Avatar"
+  className="w-10 h-10 rounded-full border border-white"
+/>
+<span className="font-semibold">
+  {user.email === "anjali@gmail.com" ? "Admin" : user.displayName || "User"}
+</span>
             </div>
 
             {/* Logout Button */}
