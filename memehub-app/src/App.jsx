@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import UploadMeme from "./components/UploadMems";
 import MemeGenerator from "./pages/MemeGenerator";
 import AdminDashboard from "./AdminPage/AdminCredentials";
+import LeaderBoardPag from "./components/LeaderBoardPag";
 
 const App = () => {
   return (
@@ -55,6 +56,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/feed" element={<Feed />} />
+            <Route path="/leaderBoard" element={<LeaderBoardPag />} />
             <Route path="/upload" element={<UploadMeme />} />
             <Route path="/generate" element={<MemeGenerator />} />
           </Routes>
