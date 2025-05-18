@@ -35,15 +35,21 @@ const Navbar = () => {
     return () => unsubscribe();
   }, []);
 
+  const adminEmail = "anjali@gmail.com"; // 🔥 Replace with actual admin email
   const navLinks = user
     ? [
         { name: "Home", path: "/" },
         { name: "Feed", path: "/feed" },
+        ...(user.email === adminEmail
+          ? [{ name: "Analytics", path: "/analytics" }]
+          : []),
       ]
     : [
-        { name: "Analytics", path: "/login" }, // ✅ Analytics now available to all users
+        { name: "Home", path: "/" },
+        { name: "Feed", path: "/feed" },
         { name: "Signup", path: "/signup" },
       ];
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authUser) => {
       if (authUser) {
